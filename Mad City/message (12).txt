@@ -1,0 +1,136 @@
+local MadLadsAR = Instance.new("ScreenGui")
+local Main = Instance.new("Frame")
+local TopBar = Instance.new("Frame")
+local TItle = Instance.new("TextLabel")
+local Exit = Instance.new("TextButton")
+local Status = Instance.new("TextLabel")
+local Mini = Instance.new("TextButton")
+local Robbing = Instance.new("TextLabel")
+local Toggle = Instance.new("TextButton")
+local Reset = Instance.new("TextButton")
+local OpenFrame = Instance.new("Frame")
+local TextButton = Instance.new("TextButton")
+--Properties:
+MadLadsAR.Name = "Mad-Lads AR"
+MadLadsAR.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+MadLadsAR.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Main.Name = "Main"
+Main.Parent = MadLadsAR
+Main.BackgroundColor3 = Color3.new(0.196078, 0.196078, 0.196078)
+Main.BorderSizePixel = 0
+Main.Position = UDim2.new(0.411008298, 0, 0.23318021, 0)
+Main.Size = UDim2.new(0, 330, 0, 165)
+
+TopBar.Name = "TopBar"
+TopBar.Parent = Main
+TopBar.BackgroundColor3 = Color3.new(0.117647, 0.117647, 0.117647)
+TopBar.BorderSizePixel = 0
+TopBar.Size = UDim2.new(0, 330, 0, 22)
+
+TItle.Name = "TItle"
+TItle.Parent = TopBar
+TItle.BackgroundColor3 = Color3.new(1, 1, 1)
+TItle.BackgroundTransparency = 1.0299999713898
+TItle.BorderSizePixel = 0
+TItle.Position = UDim2.new(0.334916383, 0, 0, 0)
+TItle.Size = UDim2.new(0, 111, 0, 22)
+TItle.Font = Enum.Font.Cartoon
+TItle.Text = "Mad-Lads AR"
+TItle.TextColor3 = Color3.new(1, 1, 1)
+TItle.TextSize = 20
+
+Exit.Name = "Exit"
+Exit.Parent = TopBar
+Exit.BackgroundColor3 = Color3.new(0.117647, 0.117647, 0.117647)
+Exit.BorderSizePixel = 0
+Exit.Position = UDim2.new(0.925687671, 0, 0, 0)
+Exit.Size = UDim2.new(0, 24, 0, 22)
+Exit.Font = Enum.Font.Cartoon
+Exit.Text = "X"
+Exit.TextColor3 = Color3.new(1, 0, 0)
+Exit.TextSize = 18
+
+Status.Name = "Status"
+Status.Parent = TopBar
+Status.BackgroundColor3 = Color3.new(1, 1, 1)
+Status.BackgroundTransparency = 1
+Status.Position = UDim2.new(-0.000776981295, 0, 6.39269304, 0)
+Status.Size = UDim2.new(0, 60, 0, 24)
+Status.Font = Enum.Font.Cartoon
+Status.Text = "Robbing:"
+Status.TextColor3 = Color3.new(1, 1, 1)
+Status.TextSize = 14
+
+Mini.Name = "Mini"
+Mini.Parent = TopBar
+Mini.BackgroundColor3 = Color3.new(0.117647, 0.117647, 0.117647)
+Mini.BorderSizePixel = 0
+Mini.Position = UDim2.new(0.850365818, 0, 0, 0)
+Mini.Size = UDim2.new(0, 24, 0, 22)
+Mini.Font = Enum.Font.Cartoon
+Mini.Text = "-"
+Mini.TextColor3 = Color3.new(1, 0, 0)
+Mini.TextSize = 21
+
+Robbing.Name = "Robbing"
+Robbing.Parent = TopBar
+Robbing.BackgroundColor3 = Color3.new(1, 1, 1)
+Robbing.BackgroundTransparency = 1
+Robbing.Position = UDim2.new(0.180606961, 0, 6.43814754, 0)
+Robbing.Size = UDim2.new(0, 71, 0, 23)
+Robbing.Font = Enum.Font.Cartoon
+Robbing.Text = "Loading..."
+Robbing.TextColor3 = Color3.new(0.67451, 0.454902, 1)
+Robbing.TextSize = 14
+Robbing.TextXAlignment = Enum.TextXAlignment.Left
+
+Toggle.Name = "Toggle"
+Toggle.Parent = Main
+Toggle.BackgroundColor3 = Color3.new(0.156863, 0.156863, 0.156863)
+Toggle.BorderSizePixel = 0
+Toggle.Position = UDim2.new(0.239734322, 0, 0.24069266, 0)
+Toggle.Size = UDim2.new(0, 171, 0, 35)
+Toggle.Font = Enum.Font.Cartoon
+Toggle.Text = "Toggle AR"
+Toggle.TextColor3 = Color3.new(0.862745, 0.862745, 0.862745)
+Toggle.TextSize = 21
+
+Reset.Name = "Reset"
+Reset.Parent = Main
+Reset.BackgroundColor3 = Color3.new(0.156863, 0.156863, 0.156863)
+Reset.BorderSizePixel = 0
+Reset.Position = UDim2.new(0.240847498, 0, 0.541290283, 0)
+Reset.Size = UDim2.new(0, 171, 0, 35)
+Reset.Font = Enum.Font.Cartoon
+Reset.Text = "Reset"
+Reset.TextColor3 = Color3.new(0.862745, 0.862745, 0.862745)
+Reset.TextSize = 21
+
+OpenFrame.Name = "OpenFrame"
+OpenFrame.Parent = MadLadsAR
+OpenFrame.BackgroundColor3 = Color3.new(1, 1, 1)
+OpenFrame.BorderSizePixel = 0
+OpenFrame.Position = UDim2.new(0.472945064, 0, -0.000236481428, 0)
+OpenFrame.Size = UDim2.new(0, 103, 0, 28)
+OpenFrame.Visible = false
+
+TextButton.Parent = OpenFrame
+TextButton.BackgroundColor3 = Color3.new(0.239216, 0.239216, 0.239216)
+TextButton.BorderSizePixel = 0
+TextButton.Size = UDim2.new(0, 103, 0, 28)
+TextButton.Font = Enum.Font.Gotham
+TextButton.Text = "Open"
+TextButton.TextColor3 = Color3.new(1, 1, 1)
+TextButton.TextSize = 19
+
+wait(1)
+Robbing.Text = "Ready."
+function zigzag(X) return math.acos(math.cos(X*math.pi))/math.pi end
+
+counter = 0
+
+while wait(0.1)do
+	Robbing.TextColor3 = Color3.fromHSV(zigzag(counter),1,1)
+ counter = counter + 0.01
+end
