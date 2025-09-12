@@ -3,4 +3,5 @@ This project is licensed under the Creative Commons Attribution-NonCommercial 4.
 You are free to modify and share this project, but commercial use is not allowed.
 
 Scripts will most likely not work without major internal changes.
+(almost) every script I've personally worked on that was found unobfuscated. I couldn't recover a lot </3
 Enjoy looking through some projects spanning from 2017 to 2025!
