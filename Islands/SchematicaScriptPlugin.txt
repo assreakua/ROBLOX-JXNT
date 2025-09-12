@@ -1,0 +1,84 @@
+local Toolbar = plugin:CreateToolbar("Schematica");
+local OpenButton = Toolbar:CreateButton("Automated Creations", "Save/load creations easily!", "rbxassetid://8262632433");
+
+local Selection = game:GetService("Selection")
+local Http = game:GetService("HttpService")
+
+local Serializer = require(script.Parent.Serializer)
+local IsOn = false;
+
+local ScreenGui = script.Parent.ScreenGui;
+ScreenGui.Enabled = IsOn;
+ScreenGui.Parent = game:GetService("CoreGui");
+
+local Blocks = game:GetObjects("rbxassetid://8261515299")[1]
+
+ScreenGui.Frame.LoadBlocks.Activated:Connect(function()
+	if workspace:FindFirstChild("Blocks") then
+		workspace.Blocks:Destroy()
+	else
+		Blocks:Clone().Parent = workspace
+	end
+end)
+
+ScreenGui.Frame.Save.Activated:Connect(function()
+	local selected = Selection:Get()[1]
+	if selected:IsA("Model") then
+		local serialized = Serializer.new(selected)
+		local result = serialized:Serialize()
+		local json = Http:JSONEncode(result)
+		local container = Instance.new("Folder", game.ServerStorage)
+		local sc  = Instance.new("Script")
+		sc.Source = "--[[\n     * Created by: xxgamer69boy_coolYTxx\n     * Modified/Updated by Jxnt#9946\n     * How To: https://pastebin.com/raw/TWRvs2m4\n\n     --->> DELETE EVERYTHING AND LEAVE ONLY THE JSON CODE BELOW TO WORK <<---\n]]--\n\n"..json
+		sc.Parent = container 
+		plugin:OpenScript(sc)
+	end
+end)
+
+ScreenGui.Frame.Load.Activated:Connect(function()
+	if not game.ServerStorage:FindFirstChild("Script") then
+		local sc = Instance.new("Script")
+		sc.Source = "Please paste your JSON code here and then click again"
+		sc.Parent = game.ServerStorage
+		plugin:OpenScript(sc)
+	else
+		local Resp = game.ServerStorage.Script.Source
+		local parsed = Http:JSONDecode(Resp)
+		local blocks = parsed.Blocks
+		local init = CFrame.new(workspace.CurrentCamera.CFrame.Position)
+		local mod = Instance.new("Model")
+		for block, array in next, blocks do
+			if Blocks:FindFirstChild(block) then
+				local toClone = Blocks[block]
+				for i, v in next, array do
+					local clone = toClone:Clone()
+					clone:SetPrimaryPartCFrame(init:ToWorldSpace(CFrame.new(unpack(v.C))))
+					clone.Parent = mod
+				end
+			end
+		end
+		mod.Parent = workspace
+	end
+end)
+
+ScreenGui.Frame.Replace.Activated:Connect(function()
+	local selected = Selection:Get()[1]
+	local partToReplace = game.Workspace.Blocks:FindFirstChild(ScreenGui.Frame["2"].Text)
+	if selected:IsA("Model") then
+		for _,v in next, selected:GetChildren() do
+			if v.Name == ScreenGui.Frame["1"].Text then
+				local clonedPart = partToReplace:Clone()
+				clonedPart:SetPrimaryPartCFrame(v.PrimaryPart.CFrame)
+				clonedPart.Parent = selected
+				v:Destroy()
+			end
+		end
+	end
+end)
+
+
+OpenButton.Click:Connect(function()
+	IsOn = not IsOn;
+	OpenButton:SetActive(IsOn);
+	ScreenGui.Enabled = IsOn;
+end);
