@@ -1,0 +1,2370 @@
+--// Destroy GUI
+for i,v in ipairs(game.CoreGui:GetChildren()) do
+if v.Name == "nfkflburxaNwLHvJ4rwm" then
+v:Destroy()
+end
+end
+
+--// Make the camera not get stuck on execution
+spawn(function()
+game.Players.LocalPlayer.CameraMinZoomDistance = 3
+wait(10)
+game.Players.LocalPlayer.CameraMinZoomDistance = 0
+end)
+
+local allBlocksInGame = {}
+for i, v in pairs(game:GetService("ReplicatedStorage").Blocks:GetChildren()) do
+table.insert(allBlocksInGame, v.Name)
+end
+
+--// Anti-AFK
+local vu = game:GetService("VirtualUser")
+game:GetService("Players").LocalPlayer.Idled:connect(
+function()
+vu:Button2Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+wait(1)
+vu:Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+end)
+
+--// if not finding mobs humanoidrootpart then do teleports
+local OLDPOS = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+wait(.5)
+game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(764.604858, 180.998001, -116.953171)
+wait(.5)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(1445.88989, 386.904999, 38.5723152)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(1445.88989, 386.904999, 38.5723152)
+wait(.5)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(1753.90674, 405.040466, -982.303528)
+wait(.5)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(725, 269, -1969)
+wait(2)
+game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OLDPOS
+
+--// Get players island position
+function getIslandFromPos(pos)
+local islands = workspace:WaitForChild("Islands"):GetChildren()
+for i = 1, #islands do
+local island = islands[i]
+if island:FindFirstChild("Root") and math.abs(island.PrimaryPart.Position.X - pos.X) <= 1000 and math.abs(island.PrimaryPart.Position.Z - pos.Z) <= 1000 then
+return island
+end
+end
+return nil
+end
+
+--// Set PlayerIsland to the island your standing on
+local PlayerIsland = nil;
+spawn(function()
+while wait(.0001) do
+PlayerIsland = getIslandFromPos(game.Players.LocalPlayer.Character.HumanoidRootPart.Position)
+if PlayerIsland == nil then
+PlayerIsland = game.Workspace.Islands[game.Players.LocalPlayer.UserId.."-island"]
+end
+end
+end)
+
+--// Liibrary
+local library;
+library = loadstring(game:HttpGet("https://system-exodus.com/scripts/modules/DetoUI.lua",true))()
+
+--// Set Library to true and toggle key
+local MainUI = library.new(true)
+MainUI.ChangeToggleKey(Enum.KeyCode.RightShift)
+
+--// Stuff
+local CropFarmingSpeed = .001
+local ReplaceTime = 5
+local testing = nil
+local testing2 = nil
+local center = Vector3.new(1550,350,200)
+local mouse = game.Players.LocalPlayer:GetMouse()
+local ores = game:GetService("Workspace").WildernessBlocks
+local Renderstepped = game:GetService("RunService").RenderStepped
+local function getore(name) 
+for i,v in pairs(ores:GetChildren()) do 
+if not string.match(v.Name, "portal") and v.Name ~= "bamboo" and v.Name ~= "tomato" and v.Name ~= "starfruit" and v.Name ~= "deadBush" then
+return v
+end
+end 
+end
+local function getitem(name) 
+for i,v in pairs(ores:GetChildren()) do 
+if not string.match(v.Name, "portal") and not string.match(v.Name, "marine") and not string.match(v.Name, "rock") and not string.match(v.Name, "dead") and not string.match(v.Name, "bamboo") then
+return v
+end
+end 
+end
+
+--// Categorys
+local Home = MainUI:Category("Home")
+local Farming = MainUI:Category("Farming")
+local Misc = MainUI:Category("Misc")
+local Printer = MainUI:Category("Printer")
+local Teleporting = MainUI:Category("Teleports")
+
+--// Home Sectors
+local SkyblockTitle = Home:Sector("\n\n\nIslands\n    - by Jxnt#9946\n    - UI Library by deto#7612\n    - https://discord.gg/PX6VTUg")
+for i = 1,13 do
+local div = Home:Sector("")
+end
+local CreatedBy = Home:Sector("Credits to:\n    - Pig#7094\n    - Someone Insane#7688\n    - Jxl#0001\n (Don't dm these people for GUI issues)")
+for i = 1,7 do
+local div = Home:Sector("")
+end
+local Thanks = Home:Sector("Thanks for using my script! - 10/16/20")
+
+--// Farming Sectors
+local CropFarming = Farming:Sector("-// Crop Farming //-")
+local OreItemFarming = Farming:Sector("-// Ore & Item Farming //-")
+local Smelting = Farming:Sector("-// Smelt Farming //-")
+local Stonecutter = Farming:Sector("-// Stonecutter Farming //-")
+local TreeFarming = Farming:Sector("-// Tree Farming //-")
+local WoodFarming = Farming:Sector("-// Sawmill Farming //-")
+local IndustrialFarming = Farming:Sector("-// Industrial Farming //-")
+local Fish = Farming:Sector("-// Fish Farming //-")
+local TotemFarming = Farming:Sector("-// Totem Farming //-")
+--// Misc Sectors
+local PlayerMods = Misc:Sector("-// Player Mods //-")
+local AutoBuy = Misc:Sector("-// Auto-Buy //-")
+local ItemStealing = Misc:Sector("-// Other Things //-")
+local DropItems = Misc:Sector("-// Drop Items //-")
+local InventoryView = Misc:Sector("-// Inventory Spy //-")
+local KillMobs = Misc:Sector("-// Farm Mobs //-")
+
+CropFarming:Cheat(
+"Dropdown", 
+"Crop",
+function(selectedCrop)
+if selectedCrop == "Berry Bush" then
+Plant = "berryBush"
+elseif selectedCrop == "Grape" then
+Plant = "grapeVine"
+elseif selectedCrop ~= "Berry Bush" and selectedCrop ~= "Grape" then
+ga = selectedCrop:lower()
+Plant = ga
+end
+end, { 
+options = {
+"(Select Crops)",
+"Wheat",
+"Tomato",
+"Potato",
+"Grape",
+"Carrot",
+"Onion",
+"Bamboo",
+"Starfruit",
+"Berry Bush"
+}
+})
+
+CropFarming:Cheat(
+"Checkbox",
+"Auto-Crops",
+function(State)
+Crops = State
+while Crops do
+wait(CropFarmingSpeed)
+if Plant == "berryBush" then
+for i,v in next, PlayerIsland.Blocks:GetChildren() do 
+if Crops then
+if Plant == "berryBush" and v.Name == "berryBush" and v:FindFirstChild("stage").Value == 2 then 
+if Crops then
+if game.Players.LocalPlayer:DistanceFromCharacter(v.Position) < 35  then
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions['CLIENT_HARVEST_CROP_REQUEST']:InvokeServer({["model"] = v, ["player"] = game.Players.LocalPlayer})
+end)
+else
+game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = v.CFrame + Vector3.new(0, 2, 0)
+game:GetService("RunService").RenderStepped:wait()
+game:GetService("ReplicatedStorage").Remotes.Functions['CLIENT_HARVEST_CROP_REQUEST']:InvokeServer({["model"] = v, ["player"] = game.Players.LocalPlayer})
+end
+end
+end
+end
+end
+end
+if Plant ~= "berryBush" and Plant ~= "grape" and Plant ~= "bamboo" then
+for i,v in next, PlayerIsland.Blocks:GetChildren() do 
+if Crops then
+if Plant ~= "berryBush" and Plant ~= "grape" and Plant ~= "bamboo" and v.Name == Plant and v:FindFirstChild("stage").Value == 3 then 
+if Crops then
+if game.Players.LocalPlayer:DistanceFromCharacter(v.Position) < 35  then
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions['CLIENT_HARVEST_CROP_REQUEST']:InvokeServer({["model"] = v, ["player"] = game.Players.LocalPlayer})
+end)
+else
+game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = v.CFrame + Vector3.new(0, 2, 0)
+game:GetService("RunService").RenderStepped:wait()
+game:GetService("ReplicatedStorage").Remotes.Functions['CLIENT_HARVEST_CROP_REQUEST']:InvokeServer({["model"] = v, ["player"] = game.Players.LocalPlayer})
+end
+end
+end
+end
+end
+end
+if Plant == "bamboo" then
+for i,v in next, game.Workspace.WildernessBlocks:GetChildren() do
+if Crops then
+if Plant == "bamboo" and v.Name == "bamboo" and v:FindFirstChild("CollisionBoxes"):FindFirstChild("Part") then
+spawn(function()
+game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = v:FindFirstChild("CollisionBoxes"):FindFirstChild("Part").CFrame * CFrame.new(0,-8,0)
+game:GetService("RunService").RenderStepped:wait()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_HIT_REQUEST"]:InvokeServer({["block"] = v})
+end)
+end
+end
+end
+end
+if Plant == "grape" then
+for i,v in next, PlayerIsland.Blocks:GetChildren() do 
+if Crops then
+if Plant == "grape" and v.Name == "grapeVine" and v:FindFirstChild("stage").Value == 3 then 
+if Crops then
+if game.Players.LocalPlayer:DistanceFromCharacter(v.Position) < 35  then
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions['CLIENT_HARVEST_CROP_REQUEST']:InvokeServer({["model"] = v, ["player"] = game.Players.LocalPlayer})
+end)
+else
+game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = v.CFrame + Vector3.new(0, 2, 0)
+game:GetService("RunService").RenderStepped:wait()
+game:GetService("ReplicatedStorage").Remotes.Functions['CLIENT_HARVEST_CROP_REQUEST']:InvokeServer({["model"] = v, ["player"] = game.Players.LocalPlayer})
+end
+end
+end
+end
+end
+end
+end
+end)
+
+CropFarming:Cheat(
+"Checkbox",
+"Auto-Replace Crops",
+function(State)
+ReplaceCrops = State
+while ReplaceCrops do
+wait(ReplaceTime)
+if Plant == "grape" then
+spawn(function()
+if game.Players.LocalPlayer.Backpack:FindFirstChild("grapeSeeds") or game.Workspace[game.Players.LocalPlayer.Name]:FindFirstChild("grapeSeeds") then
+for i,v in pairs(PlayerIsland.Blocks:GetChildren()) do
+if v.Name == "trellis" then
+if game.Players.LocalPlayer.Backpack:FindFirstChild("grapeSeeds") or game.Workspace[game.Players.LocalPlayer.Name]:FindFirstChild("grapeSeeds") then
+if (game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame - (v.CFrame + Vector3.new(0, 3, 0)).Position).p.Magnitude > 30 then
+game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame + Vector3.new(0, 4, 0)
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_PLACE_REQUEST"]:InvokeServer({["blockType"] = Plant, ["cframe"] = v.CFrame + Vector3.new(0, 3, 0)})
+end)
+else
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_PLACE_REQUEST"]:InvokeServer({["blockType"] = Plant, ["cframe"] = v.CFrame + Vector3.new(0, 3, 0)})
+end)
+end
+end
+end
+end
+end
+end)
+elseif Plant ~= "grape" and Plant ~= "bamboo" and Plant ~= "berryBush" then
+spawn(function()
+if game.Players.LocalPlayer.Backpack:FindFirstChild(Plant.."Seeds") or game.Workspace[game.Players.LocalPlayer.Name]:FindFirstChild(Plant.."Seeds") then
+for i,v in pairs(PlayerIsland.Blocks:GetChildren()) do
+if v.Name == "soil" then
+if game.Players.LocalPlayer.Backpack:FindFirstChild(Plant.."Seeds") or game.Workspace[game.Players.LocalPlayer.Name]:FindFirstChild(Plant.."Seeds") then
+if (game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame - (v.CFrame + Vector3.new(0, 3, 0)).Position).p.Magnitude > 30 then
+game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame + Vector3.new(0, 4, 0)
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_PLACE_REQUEST"]:InvokeServer({["blockType"] = Plant, ["cframe"] = v.CFrame + Vector3.new(0, 3, 0)})
+end)
+else
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_PLACE_REQUEST"]:InvokeServer({["blockType"] = Plant, ["cframe"] = v.CFrame + Vector3.new(0, 3, 0)})
+end)
+end
+end
+end
+end
+end
+end)
+end
+end
+end)
+
+
+CropFarming:Cheat(
+"Checkbox",
+"Auto-Sell Crops",
+function(State)
+SellCrops = State
+while SellCrops do
+wait(.0001)
+for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if v.Name == "onionHarvested" or v.Name == "berryHarvested" or v.Name == "wheatHarvested" or v.Name == "carrotHarvested" or v.Name == "tomatoHarvested" or v.Name == "grapeHarvested" or v.Name == "potatoHarvested" or v.Name == "starfruitHarvested" then  
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_MERCHANT_ORDER_REQUEST"]:InvokeServer({["merchant"] = "cropSell", ["offerId"] = 1, ["amount"] = v.Amount.Value})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_MERCHANT_ORDER_REQUEST"]:InvokeServer({["merchant"] = "cropSell", ["offerId"] = 1, ["amount"] = v.Amount.Value})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_MERCHANT_ORDER_REQUEST"]:InvokeServer({["merchant"] = "cropSell", ["offerId"] = 2, ["amount"] = v.Amount.Value})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_MERCHANT_ORDER_REQUEST"]:InvokeServer({["merchant"] = "cropSell", ["offerId"] = 3, ["amount"] = v.Amount.Value})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_MERCHANT_ORDER_REQUEST"]:InvokeServer({["merchant"] = "cropSell", ["offerId"] = 4, ["amount"] = v.Amount.Value})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_MERCHANT_ORDER_REQUEST"]:InvokeServer({["merchant"] = "cropSell", ["offerId"] = 5, ["amount"] = v.Amount.Value})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_MERCHANT_ORDER_REQUEST"]:InvokeServer({["merchant"] = "cropSell", ["offerId"] = 6, ["amount"] = v.Amount.Value})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_MERCHANT_ORDER_REQUEST"]:InvokeServer({["merchant"] = "cropSell", ["offerId"] = 7, ["amount"] = v.Amount.Value})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_MERCHANT_ORDER_REQUEST"]:InvokeServer({["merchant"] = "cropSell", ["offerId"] = 8, ["amount"] = v.Amount.Value})
+end
+end
+end
+end)
+
+CropFarming:Cheat(
+"Checkbox",
+"Auto-Wash Crops",
+function(State)
+WashCrops = State
+while WashCrops do
+wait(.0001)
+for i,v in pairs(PlayerIsland.Blocks:GetChildren()) do
+if v.Name == "washingStation" then
+for i,s in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if string.match(v.Name, "Oily") and not v.Name == "starfrutiOily" then
+if s:FindFirstChild("Amount") then
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_CRAFT_TOOL_REQUEST"]:InvokeServer({["amount"] = s.Amount.Value, ["workbenchBlock"] = v, ["toolName"] = "onionHarvested"})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_CRAFT_TOOL_REQUEST"]:InvokeServer({["amount"] = s.Amount.Value, ["workbenchBlock"] = v, ["toolName"] = "carrotHarvested"})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_CRAFT_TOOL_REQUEST"]:InvokeServer({["amount"] = s.Amount.Value, ["workbenchBlock"] = v, ["toolName"] = "potatoHarvested"})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_CRAFT_TOOL_REQUEST"]:InvokeServer({["amount"] = s.Amount.Value, ["workbenchBlock"] = v, ["toolName"] = "tomatoHarvested"})
+end
+end
+end
+end
+end
+end
+end)
+
+CropFarming:Cheat(
+"Checkbox",
+"Auto-Composter",
+function(State)
+Composter = State
+while Composter do
+wait(.0001)
+for i,v in pairs(PlayerIsland.Blocks:GetChildren()) do
+if v.Name == "composter" then
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v, ["amount"] = 1, ["toolName"] = "fishSalmon"})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v, ["amount"] = 1, ["toolName"] = "fishCarp"})
+end
+end
+end
+end)
+
+spawn(function()
+while Composter do
+for i,v in pairs(PlayerIsland.Blocks:GetChildren()) do
+if v.Name == "composter" and v.WorkerContents:FindFirstChildOfClass("Tool") then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,5,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_TOOL_PICKUP_REQUEST"]:InvokeServer({["tool"] = v.WorkerContents:FindFirstChild("fertilizerBasic")})
+end
+end
+end
+end)
+
+CropFarming:Cheat("Textbox", "Harvest", function(F72bd23)
+CropFarmingSpeed = F72bd23
+print(CropFarmingSpeed)
+end, {placeholder = "(Harvest Wait Time)"})
+
+CropFarming:Cheat("Textbox", "Replace", function(HG2e1)
+ReplaceTime = HG2e1
+print(ReplaceTime)
+end, {placeholder = "(Replace Wait Time)"})
+
+spawn(function()
+while wait(.0001) do
+if Crops or ReplaceCrops or MineOres or FarmItems or Tree3333 then
+game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(11)
+end
+end
+end)
+
+
+OreItemFarming:Cheat(
+"Dropdown", 
+"1st Item/s",
+function(selectedItemDroppedThing)
+if selectedItemDroppedThing == "Tomato" then
+PlantItemThing = "tomato"
+elseif selectedItemDroppedThing == "Starfruit" then
+PlantItemThing = "starfruit"
+elseif selectedItemDroppedThing == "Horseradish" then
+PlantItemThing = "horseradish"
+elseif selectedItemDroppedThing == "Acorn" then
+PlantItemThing = "acorn"
+elseif selectedItemDroppedThing == "Red Mushroom" then
+PlantItemThing = "mushroomRed"
+elseif selectedItemDroppedThing2 == "Daffodil" then
+PlantItemThing2 = "flowerDaffodil"
+elseif selectedItemDroppedThing == "Crocus" then
+PlantItemThing = "flowerCrocus"
+elseif selectedItemDroppedThing == "All (Priority)" then
+PlantItemThing = "All"
+end
+end, { 
+options = {
+"(Select Item)",
+"Tomato",
+"Starfruit",
+"Horseradish",
+"Acorn",
+"Red Mushroom",
+"Crocus",
+"All (Priority)"
+}
+})
+
+OreItemFarming:Cheat(
+"Dropdown", 
+"2nd Item",
+function(selectedItemDroppedThing2)
+if selectedItemDroppedThing2 == "Tomato" then
+PlantItemThing2 = "tomato"
+elseif selectedItemDroppedThing2 == "Starfruit" then
+PlantItemThing2 = "starfruit"
+elseif selectedItemDroppedThing2 == "Horseradish" then
+PlantItemThing2 = "horseradish"
+elseif selectedItemDroppedThing2 == "Acorn" then
+PlantItemThing2 = "acorn"
+elseif selectedItemDroppedThing2 == "Red Mushroom" then
+PlantItemThing2 = "mushroomRed"
+elseif selectedItemDroppedThing2 == "Daffodil" then
+PlantItemThing2 = "flowerDaffodil"
+elseif selectedItemDroppedThing2 == "Crocus" then
+PlantItemThing2 = "flowerCrocus"
+end
+end, { 
+options = {
+"(None)",
+"Tomato",
+"Starfruit",
+"Horseradish",
+"Daffodil",
+"Acorn",
+"Red Mushroom",
+"Crocus"
+}
+})
+
+
+OreItemFarming:Cheat(
+"Checkbox",
+"Farm Items",
+function(State)
+FarmItems = State
+while FarmItems do
+wait(.0001)
+if PlantItemThing == "All" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(center)
+theitem = getitem("starfruit")
+if not theitem then
+theitem = getitem("horseradish")
+if not theitem then
+theitem = getitem("acorn")
+if not theitem then
+theitem = getitem("mushroomRed")
+if not theitem then
+theitem = getitem("flowerCrocus")
+if not theitem then
+theitem = getitem("flowerDaffodil")
+if not theitem then
+theitem = getitem("tomato")
+end
+end
+end
+end
+end
+end
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = theitem.CFrame+Vector3.new(0,-10,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_HARVEST_CROP_REQUEST"]:InvokeServer({["model"] = theitem, ["player"] = game:GetService("Players").LocalPlayer})
+else
+for i,v in pairs(game:GetService("Workspace").WildernessBlocks:GetChildren()) do
+if v.Name == PlantItemThing or v.Name == PlantItemThing2 then
+if v.Name ~= "portal" and v.Name ~= "portalToIsland" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,-5,0)
+wait(.15)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_HARVEST_CROP_REQUEST"]:InvokeServer({["model"] = v, ["player"] = game:GetService("Players").LocalPlayer})
+wait(.15)
+end
+end
+end
+end
+end
+end)
+
+OreItemFarming:Cheat(
+"Checkbox",
+"Auto-Sell Items",
+function(State)
+SellOreItems = State
+while SellOreItems do
+wait(.0001)
+for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if v.Name == "acorn" or v.Name == "horseradish" or v.Name == "slimeBallGreen" or v.Name == "slimeBallBlue" or v.Name == "slimeBallPink" or v.Name == "potionBottle" then
+if v:FindFirstChild("Amount") then
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_MERCHANT_ORDER_REQUEST"]:InvokeServer({["merchant"] = "adventurer", ["offerId"] = 1, ["amount"] = v:FindFirstChild("Amount").Value})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_MERCHANT_ORDER_REQUEST"]:InvokeServer({["merchant"] = "adventurer", ["offerId"] = 2, ["amount"] = v:FindFirstChild("Amount").Value})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_MERCHANT_ORDER_REQUEST"]:InvokeServer({["merchant"] = "adventurer", ["offerId"] = 10, ["amount"] = v:FindFirstChild("Amount").Value})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_MERCHANT_ORDER_REQUEST"]:InvokeServer({["merchant"] = "adventurer", ["offerId"] = 11, ["amount"] = v:FindFirstChild("Amount").Value})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_MERCHANT_ORDER_REQUEST"]:InvokeServer({["merchant"] = "adventurer", ["offerId"] = 12, ["amount"] = v:FindFirstChild("Amount").Value})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_MERCHANT_ORDER_REQUEST"]:InvokeServer({["merchant"] = "adventurer", ["offerId"] = 13, ["amount"] = v:FindFirstChild("Amount").Value})
+end
+end
+end
+end
+end)
+
+OreItemFarming:Cheat(
+"Dropdown", 
+"Area",
+function(selectedArea)
+if selectedArea == "Island Ores" then
+Area = "Island Ores"
+elseif selectedArea == "Hub Ores" then
+Area = "Hub Ores"
+end
+end, { 
+options = {
+"(Select Area)",
+"Island Ores",
+"Hub Ores"}})
+OreItemFarming:Cheat(
+"Dropdown", 
+"1st Ore/s",
+function(selectedOre)
+if selectedOre == "Clay Ore" then
+Ore = "rockClay"
+elseif selectedOre == "Stone Ore" then
+Ore = "rockStone"
+elseif selectedOre == "Sandstone Ore" then
+Ore = "rockSandstoneRed"
+elseif selectedOre == "Coal Ore" then
+Ore = "rockCoal"
+elseif selectedOre == "Iron Ore" then
+Ore = "rockIron"
+elseif selectedOre == "Gold Ore" then
+Ore = "rockGold"
+elseif selectedOre == "Aquamarine Ore" then
+Ore = "rockPrismarine"
+elseif selectedOre == "All Ore (Priority)" then
+Ore = "All Ore"
+end
+end, { 
+options = {
+"(Select Ore)",
+"Clay Ore",
+"Stone Ore",
+"Sandstone Ore",
+"Coal Ore",
+"Iron Ore",
+"Gold Ore",
+"Aquamarine Ore",
+"All Ore (Priority)"}})
+
+OreItemFarming:Cheat(
+"Dropdown", 
+"2nd Ore",
+function(selectedOre23)
+if selectedOre23 == "Clay Ore" then
+Ore45 = "rockClay"
+elseif selectedOre23 == "Stone Ore" then
+Ore45 = "rockStone"
+elseif selectedOre23 == "Sandstone Ore" then
+Ore45 = "rockSandstoneRed"
+elseif selectedOre23 == "Coal Ore" then
+Ore45 = "rockCoal"
+elseif selectedOre23 == "Iron Ore" then
+Ore45 = "rockIron"
+elseif selectedOre23 == "Gold Ore" then
+Ore45 = "rockGold"
+elseif selectedOre23 == "Aquamarine Ore" then
+Ore45 = "rockPrismarine"
+end
+end, { 
+options = {
+"(None)",
+"Clay Ore",
+"Stone Ore",
+"Sandstone Ore",
+"Coal Ore",
+"Iron Ore",
+"Gold Ore",
+"Aquamarine Ore"}})
+
+OreItemFarming:Cheat(
+"Dropdown", 
+"3nd Ore",
+function(selectedOre25y73)
+if selectedOre25y73 == "Clay Ore" then
+Ore45465 = "rockClay"
+elseif selectedOre25y73 == "Stone Ore" then
+Ore45465 = "rockStone"
+elseif selectedOre25y73 == "Sandstone Ore" then
+Ore45465 = "rockSandstoneRed"
+elseif selectedOre25y73 == "Coal Ore" then
+Ore45465 = "rockCoal"
+elseif selectedOre25y73 == "Iron Ore" then
+Ore45465 = "rockIron"
+elseif selectedOre25y73 == "Gold Ore" then
+Ore45465 = "rockGold"
+elseif selectedOre25y73 == "Aquamarine Ore" then
+Ore45465 = "rockPrismarine"
+end
+end, { 
+options = {
+"(None)",
+"Clay Ore",
+"Stone Ore",
+"Sandstone Ore",
+"Coal Ore",
+"Iron Ore",
+"Gold Ore",
+"Aquamarine Ore"}})
+
+OreItemFarming:Cheat(
+"Checkbox",
+"Auto-Mine Ores",
+function(State)
+MineOres = State
+while MineOres do
+wait(.0001)
+if Area == "Island Ores" then
+if Ore == "All Ore" then
+for i,v in pairs(PlayerIsland.Blocks:GetChildren()) do
+if v.Name == "rockIron" or v.Name == "rockGold" or v.Name == "rockCoal" or v.Name == "rockStone" or v.Name == "rockPrismarine" or v.Name == "rockClay" then
+if MineOres then
+repeat
+wait(.001)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,4,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_HIT_REQUEST"]:InvokeServer({["block"] = v})
+until not MineOres or not v:IsDescendantOf(game)
+end
+end
+end
+else
+for i,v in pairs(PlayerIsland.Blocks:GetChildren()) do
+if v.Name == Ore or v.Name == Ore45 or v.Name == Ore45465 then
+if MineOres then
+repeat
+wait(.0001)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,4,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_HIT_REQUEST"]:InvokeServer({["block"] = v})
+until not v:IsDescendantOf(game) or not MineOres
+end
+end
+end
+end
+end
+if Area == "Hub Ores" then
+if Ore == "All Ore" then
+if MineOres then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(center)
+theOre = getore("aquamarine")
+if not theOre then
+theOre = getore("gold")
+if not theOre then
+theOre = getore("iron")
+if not theOre then
+theOre = getore("coal")
+if not theOre then
+theOre = getore("marinePlant2") or getore("marinePlant5")
+if not theOre then
+theOre = getore("redSandstone")
+if not theOre then
+theOre = getore("stone")
+end
+end
+end
+end
+end
+end
+end
+if MineOres then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = theOre.CFrame + Vector3.new(0,-5,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_HIT_REQUEST"]:InvokeServer({["block"] = theOre})
+end
+else
+if Ore == "rockPrismarine" or Ore45 == "rockPrismarine" or Ore45465 == "rockPrismarine" then
+local TheCoral = game.Workspace.WildernessBlocks:FindFirstChild("marinePlant2") or game.Workspace.WildernessBlocks:FindFirstChild("marinePlant3") or game.Workspace.WildernessBlocks:FindFirstChild("marinePlant4") or game.Workspace.WildernessBlocks:FindFirstChild("marinePlant5") or game.Workspace.WildernessBlocks:FindFirstChild("marinePlant6") 
+if game.Workspace.WildernessBlocks:FindFirstChild("rockPrismarine") then
+repeat
+wait(.001)
+if MineOres then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Workspace.WildernessBlocks:FindFirstChild("rockPrismarine").CFrame * CFrame.new(0,-5,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_HIT_REQUEST"]:InvokeServer({["block"] = game.Workspace.WildernessBlocks:FindFirstChild("rockPrismarine")})
+end
+until not game.Workspace.WildernessBlocks:FindFirstChild("rockPrismarine"):IsDescendantOf(game) or MineOres == false
+elseif TheCoral then
+repeat
+wait(.001)
+if MineOres then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = TheCoral.CFrame * CFrame.new(0,-5,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_HIT_REQUEST"]:InvokeServer({["block"] = TheCoral})
+end
+until not TheCoral:IsDescendantOf(game) or MineOres == false
+end
+end
+for i,v in pairs(game:GetService("Workspace").WildernessBlocks:GetChildren()) do
+if Ore ~= "rockPrismarine" and Ore45 ~= "rockPrismarine" then
+if v.Name == Ore or v.Name == Ore45 or v.Name == Ore45465 then
+if v.Name ~= "portal" and v.Name ~= "portalToIsland" then
+if MineOres then
+repeat
+wait(.001)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,-5,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_HIT_REQUEST"]:InvokeServer({["block"] = v})
+until not MineOres or not v:IsDescendantOf(game)
+end
+end
+end
+end
+end
+end
+end
+end
+end)
+
+
+
+
+--// Smelt Farming 
+Smelting:Cheat(
+"Dropdown", 
+"Ore",
+function(TheOre2)
+if TheOre2 == "Clay" then
+SmeltOre = "clay"
+elseif TheOre2 == "Iron Ore" then
+SmeltOre = "ironOre"
+elseif TheOre2 == "Bamboo" then
+SmeltOre = "bamboo"
+elseif TheOre2 == "Grass" then
+SmeltOre = "grass"
+elseif TheOre2 == "Sand" then
+SmeltOre = "sand"
+elseif TheOre2 == "Gold Ore" then
+SmeltOre = "goldOre"
+elseif TheOre2 == "All Ore" then
+SmeltOre = "All Ore"
+end
+end, { 
+options = {
+"(Select Item)",
+"Bamboo",
+"Grass",
+"Sand",
+"Clay",
+"Iron Ore",
+"Gold Ore",
+"All Ore"}})
+
+Smelting:Cheat(
+"Dropdown", 
+"Smelters",
+function(Smelters)
+if Smelters == "Campfires" then
+Smelterss = "campfires"
+elseif Smelters == "Small Furnaces" then
+Smelterss = "smallFurnace"
+elseif Smelters == "Industrial Smelters" then
+Smelterss = "smelterIndustrial"
+end
+end, { 
+options = {
+"(Select Smelter)",
+"Campfires",
+"Small Furnaces",
+"Industrial Smelters"}})
+
+Smelting:Cheat(
+"Checkbox",
+"Auto-Smelt",
+function(State)
+Smelting2 = State
+while Smelting2 do
+wait(.0001)
+for i,v in pairs(PlayerIsland.Blocks:GetChildren()) do
+if v.Name == "smallFurnace" then
+if Smelterss == "smallFurnace" and SmeltOre == "All Ore" then
+for i,s in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if game.Players.LocalPlayer.Backpack:FindFirstChild("coal") then
+if s.Name == "sand" or s.Name == "bamboo" or s.Name == "clay" or s.Name == "ironOre" or s.Name == "goldOre" or s.Name == "grass" then
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = s.Name})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = "coal"})
+end)
+end
+end
+end
+elseif SmeltOre ~= "All Ore" and Smelterss == "smallFurnace" then
+for i,s in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if game.Players.LocalPlayer.Backpack:FindFirstChild("coal") then
+if s.Name == SmeltOre then
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = s.Name})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = "coal"})
+end)
+end
+end
+end
+end
+elseif v.Name == "smelterIndustrial" then
+if Smelterss == "smelterIndustrial" and SmeltOre == "All Ore" then
+for i,s in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if game.Players.LocalPlayer.Backpack:FindFirstChild("coal") then
+if s.Name == "sand" or s.Name == "bamboo" or s.Name == "clay" or s.Name == "ironOre" or s.Name == "goldOre" or s.Name == "grass" then
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = s.Name})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = "coal"})
+end)
+end
+end
+end
+elseif SmeltOre ~= "All Ore" and Smelterss == "smelterIndustrial" then
+for i,s in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if game.Players.LocalPlayer.Backpack:FindFirstChild("coal") then
+if s.Name == SmeltOre then
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = s.Name})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = "coal"})
+end)
+end
+end
+end
+end
+elseif v.Name == "campfire" then
+if Smelterss == "campfires" and SmeltOre == "All Ore" then
+for i,s in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if string.match(s.Name, "wood") and not string.match(s.Name, "swordWood") and not string.match(s.Name, "woodAxe") and not string.match(s.Name, "woodPickaxe") and not string.match(s.Name, "woodPlank") then
+for i,g in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if g.Name == "sand" or g.Name == "bamboo" or g.Name == "clay" or g.Name == "ironOre" or g.Name == "goldOre" or g.Name == "grass" then
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = g.Name})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = s.Name})
+end)
+end
+end
+end
+end
+elseif Smelterss == "campfires" and SmeltOre ~= "All Ore" then
+for i,s in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if string.match(s.Name, "wood") and not string.match(s.Name, "swordWood") and not string.match(s.Name, "woodAxe") and not string.match(s.Name, "woodPickaxe") and not string.match(s.Name, "woodPlank") then
+for i,g in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if g.Name == SmeltOre then
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = SmeltOre})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = s.Name})
+end)
+end
+end
+end
+end
+end
+end
+end
+end
+end)
+
+spawn(function()
+while wait(.001) do
+if Smelting2 then
+if Smelterss == "smallFurnace" then
+for i,v in pairs(PlayerIsland.Blocks:GetChildren()) do
+if v.Name == "smallFurnace" then
+for i,s in pairs(v.WorkerContents:GetChildren()) do
+if s.Name == "iron" or s.Name == "gold" or s.Name == "brick" or s.Name == "bambooDried" or v.Name == "glassBlock" or v.Name == "grassDry" then
+if (game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame - (v.CFrame + Vector3.new(0, 3, 0)).Position).p.Magnitude > 15 then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,6,0)
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_TOOL_PICKUP_REQUEST"]:InvokeServer({["tool"] = v.WorkerContents:FindFirstChild(s.Name)})
+end)
+else
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_TOOL_PICKUP_REQUEST"]:InvokeServer({["tool"] = v.WorkerContents:FindFirstChild(s.Name)})
+end)
+end
+end
+end
+end
+end
+elseif Smelterss == "campfires" then
+for i,v in pairs(PlayerIsland.Blocks:GetChildren()) do
+if v.Name == "campfire" then
+for i,s in pairs(v.WorkerContents:GetChildren()) do
+if s.Name == "iron" or s.Name == "gold" or s.Name == "brick" or s.Name == "bambooDried" or v.Name == "glassBlock" or v.Name == "grassDry" then
+if (game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame - (v.CFrame + Vector3.new(0, 3, 0)).Position).p.Magnitude > 15 then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,6,0)
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_TOOL_PICKUP_REQUEST"]:InvokeServer({["tool"] = v.WorkerContents:FindFirstChild(s.Name)})
+end)
+else
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_TOOL_PICKUP_REQUEST"]:InvokeServer({["tool"] = v.WorkerContents:FindFirstChild(s.Name)})
+end)
+end
+end
+end
+end
+end
+end
+end
+end
+end)
+
+
+--//Stonecutter Farming
+Stonecutter:Cheat(
+"Dropdown", 
+"Block",
+function(ZeOre)
+if ZeOre == "Stone" then
+Stonecutterore = "stone"
+elseif ZeOre == "Red Sandstone" then
+Stonecutterore = "sandstoneRed"
+elseif ZeOre == "Prismarine" then
+Stonecutterore = "prismarineBlock"
+elseif ZeOre == "All" then
+Stonecutterore = "All"
+end
+end, { 
+options = {
+"(Select Block)",
+"Stone",
+"Red Sandstone",
+"Prismarine",
+"All"}})
+
+Stonecutter:Cheat(
+"Dropdown", 
+"Cutters",
+function(Stonecutters)
+if Stonecutters == "Stonecutter" then
+Stonecutterss = "stonecutter"
+elseif Stonecutters == "Industrial Stonecutter" then
+Stonecutterss = "stonecutterIndustrial"
+end
+end, { 
+options = {
+"(Select Stonecutter)",
+"Stonecutter",
+"Industrial Stonecutter"}})
+
+Stonecutter:Cheat(
+"Checkbox",
+"Auto-Cutter",
+function(State)
+Stonecutterzs = State
+while Stonecutterzs do
+wait(.0001)
+for i,v in pairs(PlayerIsland.Blocks:GetChildren()) do
+if v.Name == "stonecutter" then
+if Stonecutterss == "stonecutter" and Stonecutterore == "All" then
+for i,s in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if s.Name == "prismarineBlock" or s.Name == "sandstoneRed" or s.Name == "stone" then
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = s.Name})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = "coal"})
+end)
+end
+end
+elseif Stonecutterore ~= "All" and Stonecutterss == "stonecutter" then
+for i,s in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if s.Name == Stonecutterore then
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = s.Name})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = "coal"})
+end)
+end
+end
+end
+elseif v.Name == "stonecutterIndustrial" then
+if Stonecutterss == "stonecutterIndustrial" and Stonecutterore == "All" then
+for i,s in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if s.Name == "prismarineBlock" or s.Name == "sandstoneRed" or s.Name == "stone" then
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = s.Name})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = "coal"})
+end)
+end
+end
+elseif Stonecutterss == "stonecutterIndustrial" and Stonecutterore ~= "All" then
+for i,s in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if s.Name == Stonecutterore then
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = s.Name})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = "coal"})
+end)
+end
+end
+end
+end
+end
+end
+end)
+
+spawn(function()
+while wait(.001) do
+if Stonecutterzs then
+if Stonecutterss == "stonecutter" then
+for i,v in pairs(PlayerIsland.Blocks:GetChildren()) do
+if v.Name == "stonecutter" then
+spawn(function()
+if v.WorkerContents:FindFirstChild("sandstoneRedBrick") then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,6,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_TOOL_PICKUP_REQUEST"]:InvokeServer({["tool"] = v.WorkerContents:FindFirstChild("sandstoneRedBrick")})
+elseif v.WorkerContents:FindFirstChild("stoneBrick") then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,6,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_TOOL_PICKUP_REQUEST"]:InvokeServer({["tool"] = v.WorkerContents:FindFirstChild("stoneBrick")})
+elseif v.WorkerContents:FindFirstChild("prismarineBrick") then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,6,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_TOOL_PICKUP_REQUEST"]:InvokeServer({["tool"] = v.WorkerContents:FindFirstChild("prismarineBrick")})
+end
+end)
+end
+end
+end
+end
+end
+end)
+
+--// Tree Farming
+TreeFarming:Cheat(
+"Checkbox",
+"Auto-Trees",
+function(State)
+Tree3333 = State
+while Tree3333 do
+wait(.001)
+print("notdone")
+end
+end
+end)
+
+TreeFarming:Cheat(
+"Dropdown", 
+"Type",
+function(SelectedTree)
+if SelectedTree == "Normal Tree" then
+Treez = "tree"
+elseif SelectedTree == "Birch Tree" then
+Treez = "treeBirch"
+elseif SelectedTree == "Pine Tree" then
+Treez = "treePine"
+elseif SelectedTree == "Maple Tree" then
+Treez = "treeMaple"
+elseif SelectedTree == "Hickory Tree" then
+Treez = "treeHickory"
+elseif SelectedTree == "Avocado Tree" then
+Treez = "treeAvocado"
+elseif SelectedTree == "Apple Tree" then
+Treez = "treeApple"
+elseif SelectedTree == "Lemon Tree" then
+Treez = "treeLemon"
+elseif SelectedTree == "Orange Tree" then
+Treez = "treeOrange"
+elseif SelectedTree == "All Trees" then
+Treez = "All Trees"
+end
+end, { 
+options = {
+"(Select Tree)",
+"Normal Tree",
+"Birch Tree",
+"Pine Tree",
+"Maple Tree",
+"Hickory Tree",
+"Avocado Tree",
+"Apple Tree",
+"Lemon Tree",
+"Orange Tree",
+"All Trees"}})
+
+
+--// Sawmill Farming
+WoodFarming:Cheat(
+"Dropdown", 
+"Wood",
+function(SelectedWood)
+if SelectedWood == "Normal Wood" then
+Wood = "wood"
+elseif SelectedWood == "Birch Wood" then
+Wood = "woodBirch"
+elseif SelectedWood == "Pine Wood" then
+Wood = "woodPine"
+elseif SelectedWood == "Maple Wood" then
+Wood = "woodMaple"
+elseif SelectedWood == "Hickory Wood" then
+Wood = "woodHickory"
+elseif SelectedWood == "All Wood" then
+Wood = "All Wood"
+end
+end, { 
+options = {
+"(Select Wood)",
+"Normal Wood",
+"Birch Wood",
+"Pine Wood",
+"Maple Wood",
+"Hickory Wood",
+"All Wood"}})
+
+WoodFarming:Cheat(
+"Dropdown", 
+"Sawmills",
+function(SelectedSawmill)
+if SelectedSawmill == "Sawmill" then
+Sawmill = "sawmill"
+elseif SelectedSawmill == "Industrial Sawmill" then
+Sawmill = "sawmillIndustrial"
+end
+end, { 
+options = {
+"(Select Sawmills)",
+"Sawmill",
+"Industrial Sawmill"}})
+
+WoodFarming:Cheat(
+"Checkbox",
+"Auto-Sawmill",
+function(State)
+Sawmillsz = State
+while Sawmillsz do
+wait(.0001)
+for i,v in pairs(PlayerIsland.Blocks:GetChildren()) do
+if v.Name == "sawmill" then
+if Sawmill == "sawmill" and Wood == "All Wood" then
+for i,s in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if s.Name == "woodMaple" or s.Name == "woodHickory" or s.Name == "wood" or s.Name == "woodBirch" or s.Name == "woodPine" then
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = s.Name})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = "coal"})
+end)
+end
+end
+elseif Sawmill == "sawmill" and Wood ~= "All Wood" then
+for i,s in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if s.Name == Wood then
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = Wood})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = "coal"})
+end)
+end
+end
+end
+elseif v.Name == "sawmillIndustrial" then
+if Sawmill == "sawmillIndustrial" and Wood == "All Wood" then
+for i,s in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if s.Name == "woodMaple" or s.Name == "woodHickory" or s.Name == "wood" or s.Name == "woodBirch" or s.Name == "woodPine" then
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = s.Name})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = "coal"})
+end)
+end
+end
+elseif Sawmill == "sawmillIndustrial" and Wood ~= "All Wood" then
+for i,s in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if s.Name == Wood then
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = s.Name})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v,["amount"] = 1,["toolName"] = "coal"})
+end)
+end
+end
+end
+end
+end
+end
+end)
+
+
+spawn(function()
+while Sawmillsz do
+wait(.001)
+if Sawmill == "sawmill" then
+for i,v in pairs(PlayerIsland.Blocks:GetChildren()) do
+if v.Name == "sawmill" then
+spawn(function()
+if v.WorkerContents:FindFirstChild("woodPlank") then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,6,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_TOOL_PICKUP_REQUEST"]:InvokeServer({["tool"] = v.WorkerContents:FindFirstChild("woodPlank")})
+elseif v.WorkerContents:FindFirstChild("birchPlank") then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,6,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_TOOL_PICKUP_REQUEST"]:InvokeServer({["tool"] = v.WorkerContents:FindFirstChild("birchPlank")})
+elseif v.WorkerContents:FindFirstChild("pinePlank") then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,6,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_TOOL_PICKUP_REQUEST"]:InvokeServer({["tool"] = v.WorkerContents:FindFirstChild("pinePlank")})
+elseif v.WorkerContents:FindFirstChild("maplePlank") then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,6,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_TOOL_PICKUP_REQUEST"]:InvokeServer({["tool"] = v.WorkerContents:FindFirstChild("maplePlank")})
+elseif v.WorkerContents:FindFirstChild("hickoryPlank") then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,6,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_TOOL_PICKUP_REQUEST"]:InvokeServer({["tool"] = v.WorkerContents:FindFirstChild("hickoryPlank")})
+end
+end)
+end
+end
+end
+end
+end)
+
+IndustrialFarming:Cheat(
+"Checkbox",
+"CN Industrial Chest",
+function(State)
+NearChest = State
+while NearChest do
+wait(.0001)
+for i,v in pairs(PlayerIsland:FindFirstChild("Blocks"):GetChildren()) do
+if string.match(v.Name, "chestMediumIndustrial") then
+if v:FindFirstChild("Contents"):FindFirstChildOfClass("Tool") then
+if SettingsIndustTeleport then
+game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = v
+end
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+if v:FindFirstChild("Contents") then
+if v.Contents:FindFirstChildOfClass("Tool") then
+if v.Contents:FindFirstChildOfClass("Tool"):FindFirstChild("Amount") then
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_CHEST_TRANSACTION"]:InvokeServer({["chest"] = v,["tool"] = v.Contents:FindFirstChildOfClass("Tool"),["action"] = "withdraw",["amount"] = v.Contents:FindFirstChildOfClass("Tool").Amount.Value})
+end
+end
+end
+end)
+end
+end
+end
+end
+end)
+
+IndustrialFarming:Cheat(
+"Checkbox",
+"Auto-Fuel",
+function(State)
+Fuel = State
+while Fuel do
+wait(.0001)
+for i,v in pairs(PlayerIsland.Blocks:GetChildren()) do
+if string.match(v.Name, "Industrial") and not string.match(v.Name, "chestIndustrial") then
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST"]:InvokeServer({["block"] = v, ["amount"] = 1, ["toolName"] = "coal"})
+end)
+end
+end
+end
+end)
+
+--// Auto-Fising
+function getFish()
+return game:GetService("Workspace"):FindFirstChild("Fish")
+end
+function getPlayerBobber()
+for i, v in pairs(workspace:GetChildren()) do
+if v.Name == "Bobber" and v.Player.Value == game.Players.LocalPlayer then
+return v
+end
+end
+return nil
+end
+function roundVector(vec)
+return Vector3.new(math.floor(vec.X + 0.5), math.floor(vec.Y + 0.5), math.floor(vec.Z + 0.5)) 
+end
+workspace.ChildAdded:Connect(function(child)
+if child.Name == "bubbles" then
+for i, v in pairs(child:GetChildren()) do
+print(i, v)
+end
+if roundVector(child.Position) == roundVector(getFish().Position) then
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_PULL_FISHING_ROD"]:InvokeServer({["catchAttempt"] = true})
+end
+end
+end)
+spawn(function()
+game:GetService("RunService").Heartbeat:Connect(function()
+if getFish() ~= nil and getPlayerBobber() ~= nil then
+getPlayerBobber().Position = getFish().Position
+end
+end)
+end)
+
+Fish:Cheat(
+"Checkbox",
+"Auto-Fish",
+function(State)
+AutoFish = State
+while AutoFish do
+wait(.0001)
+game:GetService("ReplicatedStorage").Remotes.Functions.CLIENT_BAIT_POND:InvokeServer({["toolId"] = "bait"})
+local fish = getFish()
+local bob = getPlayerBobber()
+if fish ~= nil then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = fish.CFrame - Vector3.new(0, 15, 0)
+end
+if bob == nil then
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_CAST_FISHING_ROD"]:InvokeServer({["playerLocation"] = game.Players.LocalPlayer.Character.HumanoidRootPart.Position, ["direction"] = game.Players.LocalPlayer.Character.HumanoidRootPart.Position - Vector3.new(0, 5, 0), ["strength"] = 99999999999999999999999})
+end
+game:GetService("RunService").Heartbeat:wait()
+end
+end)
+
+Fish:Cheat(
+"Checkbox",
+"Auto-Sell Fish",
+function(State)
+SellFish = State
+while SellFish do
+wait(.0001)
+for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+if string.match(v.Name, "fish") then
+for i = 1, 11 do
+local A_1 = {["merchant"] = "fisherman", ["offerId"] = i, ["amount"] = v.Amount.Value}
+local Event = game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_MERCHANT_ORDER_REQUEST"]
+Event:InvokeServer(A_1)
+end
+end
+end
+end
+end)
+
+--// Totem Farming
+TotemFarming:Cheat(
+"Checkbox",
+"CN Totems",
+function(State)
+Totems = State
+while Totems do
+wait(.0001)
+for i,v in pairs(PlayerIsland:FindFirstChild("Blocks"):GetChildren()) do
+if string.match(v.Name, "totem") then
+if v:FindFirstChild("WorkerContents"):FindFirstChildOfClass("Tool") then
+if SettingTotemTP then
+game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = v
+end
+game:GetService("RunService").Heartbeat:wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_TOOL_PICKUP_REQUEST"]:InvokeServer({["tool"] = v:FindFirstChild("WorkerContents"):FindFirstChildOfClass("Tool")})
+end)
+end
+end
+end
+end
+end)
+
+PlayerMods:Cheat("Button", "Fast Break", function()
+local mt = getrawmetatable(game)
+setreadonly(mt, false)
+local old = mt.__newindex
+_G.hitspeed = 0.28
+mt.__newindex = newcclosure(function(o, k, v)
+if tostring(k) == "blockHitDelay" then
+return old(o, k, _G.hitspeed)
+end
+return old(o, k, v)
+end)
+for i,v in pairs(getgc(true)) do
+if type(v) == "table" and rawget(v, "blockHitDelay") then
+v.blockHitDelay = _G.hitspeed;
+end
+end
+end)
+
+PlayerMods:Cheat("Button", "God Mode", function()
+if game:GetService("Players").LocalPlayer.Character:FindFirstChild("CurrentHealth") then
+game:GetService("Players").LocalPlayer.Character:FindFirstChild("CurrentHealth"):Destroy()
+end
+end)
+
+local noGetraw = true
+if not getrawmetatable then
+print("Your exploit doesn't have getrawmetatable()!")
+noGetraw = false
+local Ga2mer = Printer:Sector("-// Uh Oh //-")
+Ga2mer:Cheat("Label", "Your exploit doesn't support getrawmetatable!")
+Ga2mer:Cheat("Label", "If you wish to use this feature, use one of these free exploits:")
+Ga2mer:Cheat("Label", "\n- Krnl\n- Krnl\n- Krnl")
+end
+
+if noGetraw == true then
+local Printer2 = Printer:Sector("-// Printer //-")
+local Printer2Settings = Printer:Sector("-// Settings //-")
+local editFirst = false
+local editSecond = false
+local editFirstDone = false
+local editSecondDone = false
+local firstPos = nil
+local secondPos = nil
+
+local HeldItem = false
+Printer2Settings:Cheat(
+"Checkbox",
+"Place Held Item",
+function(State)
+HeldItem = State
+end)
+
+Printer2:Cheat("Button", "Edit First", function()
+editFirst = true
+editSecond = false
+end)
+
+Printer2:Cheat("Button", "Edit Second", function()
+editFirst = false
+editSecond = true
+end)
+
+function sendChatMessage(message, color)
+game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {Text = message, Color = color, Font = Enum.Font.SourceSansBold, TextSize = 20})
+end
+
+local mt = getrawmetatable(game)
+local namecall = mt.__namecall
+
+setreadonly(mt, false)
+mt.__namecall = newcclosure(function(self, ...)
+local method = getnamecallmethod()
+local args = {...}
+
+if tostring(self) == "CLIENT_BLOCK_PLACE_REQUEST" and tostring(method) == "InvokeServer" then
+if editFirst then
+firstPos = args[1]["cframe"].p
+editFirstDone = true
+editFirst = false
+editSecond = false
+for i,v in pairs(game.Workspace:GetChildren()) do
+if v.Name == "vdsgvgsdvgdsvsdsgsddsvgsd" then
+v:Destroy()
+end
+end
+local pgart = Instance.new("Part", workspace)
+pgart.Name = "vdsgvgsdvgdsvsdsgsddsvgsd"
+pgart.Anchored = true
+pgart.CanCollide = false
+pgart.Transparency = 0.5
+pgart.Size = Vector3.new(3, 3, 3)
+pgart.Material = Enum.Material.SmoothPlastic
+pgart.Color = Color3.fromRGB(196, 40, 28)
+pgart.Position = firstPos
+sendChatMessage("First position set to (" .. tostring(firstPos) .. ")", Color3.fromRGB(255, 0, 255))
+return {["success"] = false}
+elseif editSecond then
+secondPos = args[1]["cframe"].p
+editSecondDone = true
+editFirst = false
+editSecond = false
+for i,v in pairs(game.Workspace:GetChildren()) do
+if v.Name == "vdsgvgsdvgdsvgsdvgsd" then
+v:Destroy()
+end
+end
+local par345rt = Instance.new("Part", workspace)
+par345rt.Name = "vdsgvgsdvgdsvgsdvgsd"
+par345rt.Anchored = true
+par345rt.CanCollide = false
+par345rt.Material = Enum.Material.SmoothPlastic
+par345rt.Transparency = 0.5
+par345rt.Size = Vector3.new(3, 3, 3)
+par345rt.Color = Color3.fromRGB(13, 105, 172)
+par345rt.Position = secondPos
+sendChatMessage("Second position set to (" .. tostring(secondPos) .. ")", Color3.fromRGB(255, 0, 255))
+return {["success"] = false}
+end
+end
+return namecall(self, ...)
+end)
+
+local player = game:GetService("Players").LocalPlayer
+local character = player.Character
+
+function tablefind(tab,el)
+for index, value in pairs(tab) do
+if value == el then
+return index
+end
+end
+end
+
+local humandoidThingenabled = false
+function getNameByDisplayName(name)
+for i, v in pairs(game:GetService("ReplicatedStorage").Tools:GetChildren()) do
+if v:FindFirstChild("DisplayName") and v.DisplayName.Value == name and v.Name ~= "wheatHarvested" and v.Name ~= "carrotHarvested" and v.Name ~= "potatoHarvested" and v.Name ~= "starfruitHarvested" and v.Name ~= "onionHarvested" and v.Name ~= "tomatoHarvested" then
+return v.Name
+end
+end
+end
+
+local gameBlocks = {}
+for i, v in pairs(game:GetService("ReplicatedStorage").Tools:GetChildren()) do
+if v:FindFirstChild("DisplayName") and (v:FindFirstChild("block-place")) then
+if v.DisplayName.Value ~= "Birch Tree" and v.DisplayName.Value ~= "Dirt" and v.DisplayName.Value ~= "Barbecue" and v.DisplayName.Value ~= "Rock" and v.DisplayName.Value ~= "Block Removed" and v.DisplayName.Value ~= "Island Portal" and v.DisplayName.Value ~= "Maple Tree" and v.DisplayName.Value ~= "Pine Tree" and v.DisplayName.Value ~= "Portal" and v.DisplayName.Value ~= "Tree" and v.DisplayName.Value ~= "Tree 2" and v.DisplayName.Value ~= "Soil" then
+table.insert(gameBlocks, v.DisplayName.Value)
+end
+end
+end
+
+table.sort(gameBlocks, function(i,v) return (i) < (v) 
+end)
+
+local blockType = nil
+Printer2:Cheat("Dropdown", "Block Type", function(Option)
+print("Dropdown option changed:", Option)
+blockType = Option
+end, {options = gameBlocks, default = "(Select Block)"})
+
+local Stop = false
+
+Printer2:Cheat("Button", "Place", function()
+Stop = false
+local firstX, firstY, firstZ = firstPos.X, firstPos.Y, firstPos.Z
+local secondX, secondY, secondZ = secondPos.X, secondPos.Y, secondPos.Z
+local deltaX, deltaY, deltaZ = secondX - firstX, secondY - firstY, secondZ - firstZ
+local secondDeltaX, secondDeltaY, secondDeltaZ = firstX + deltaX, firstY + deltaY, firstZ + deltaZ
+local firstXCom, secondXCom, firstYCom, secondYCom, firstZCom, secondZCom
+if firstX > secondDeltaX then
+firstXCom = secondDeltaX
+secondXCom = firstX
+else
+firstXCom = firstX
+secondXCom = secondDeltaX
+end
+if firstY > secondDeltaY then
+firstYCom = secondDeltaY
+secondYCom = firstY
+else
+firstYCom = firstY
+secondYCom = secondDeltaY
+end
+if firstZ > secondDeltaZ then
+firstZCom = secondDeltaZ
+secondZCom = firstZ
+else
+firstZCom = firstZ
+secondZCom = secondDeltaZ
+end
+function grabPossibleSpots()
+local possibles = {}
+for i3 = firstZCom, secondZCom, 3 do
+for i2 = firstYCom, secondYCom, 3 do
+for i = firstXCom, secondXCom, 3 do
+local newPossible = Vector3.new(i, i2, i3)
+if tablefind(possibles, newPossible) == nil then
+table.insert(possibles, newPossible)
+end
+end
+end
+end
+return possibles
+end
+local possibleSpots = grabPossibleSpots()
+for i, v in pairs(possibleSpots) do
+if Stop == false then
+game.Players.LocalPlayer.Character.Humanoid:ChangeState(11)
+game:GetService("RunService").RenderStepped:wait()
+spawn(function()
+if game.Players.LocalPlayer:DistanceFromCharacter(v) > tonumber(20) then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v + Vector3.new(0, 10, 0))
+end
+end)
+game:GetService("RunService").RenderStepped:wait()
+if HeldItem == false then
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_PLACE_REQUEST"]:InvokeServer({["blockType"] = getNameByDisplayName(blockType), ["cframe"] = CFrame.new(v)})
+end)
+elseif HeldItem == true then
+spawn(function()
+if not string.find(game.Workspace[game.Players.LocalPlayer.Name]:FindFirstChildOfClass("Tool").Name, "Flower") then
+nameThing124 = string.gsub(game.Workspace[game.Players.LocalPlayer.Name]:FindFirstChildOfClass("Tool").Name, "Seeds", "")
+else
+nameThing124 = string.gsub(game.Workspace[game.Players.LocalPlayer.Name]:FindFirstChildOfClass("Tool").Name, "Seeds", "s")
+end
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_PLACE_REQUEST"]:InvokeServer({["blockType"] = nameThing124, ["cframe"] = CFrame.new(v)})
+end)
+end)
+end
+end
+end
+
+sendChatMessage("Started! (~" .. tostring(#possibleSpots) .. " blocks will be affected)")
+for i,v in pairs(game.Workspace:GetChildren()) do
+if v.Name == "vdsgvgsdvgdsvgsdvgsd" or v.Name == "vdsgvgsdvgdsssssvgsdvgsd" or v.Name == "vdsgvgsdvgdsvsdsgsddsvgsd" then
+v:Destroy()
+end
+end
+end)
+
+local theblock = nil
+Printer2:Cheat("Button", "Break", function()
+Stop = false
+theblock = nil
+_G.thingasdasdas = true
+local firstX, firstY, firstZ = firstPos.X, firstPos.Y, firstPos.Z
+local secondX, secondY, secondZ = secondPos.X, secondPos.Y, secondPos.Z
+local deltaX, deltaY, deltaZ = secondX - firstX, secondY - firstY, secondZ - firstZ
+local secondDeltaX, secondDeltaY, secondDeltaZ = firstX + deltaX, firstY + deltaY, firstZ + deltaZ
+local firstXCom, secondXCom, firstYCom, secondYCom, firstZCom, secondZCom
+if firstX > secondDeltaX then
+firstXCom = secondDeltaX
+secondXCom = firstX
+else
+firstXCom = firstX
+secondXCom = secondDeltaX
+end
+if firstY > secondDeltaY then
+firstYCom = secondDeltaY
+secondYCom = firstY
+else
+firstYCom = firstY
+secondYCom = secondDeltaY
+end
+if firstZ > secondDeltaZ then
+firstZCom = secondDeltaZ
+secondZCom = firstZ
+else
+firstZCom = firstZ
+secondZCom = secondDeltaZ
+end
+function grabPossibleSpots()
+local possibles = {}
+for i3 = firstZCom, secondZCom, 3 do
+for i2 = firstYCom, secondYCom, 3 do
+for i = firstXCom, secondXCom, 3 do
+local newPossible = Vector3.new(i, i2, i3)
+if tablefind(possibles, newPossible) == nil then
+table.insert(possibles, newPossible)
+end
+end
+end
+end
+return possibles
+end
+
+local possibleSpots = grabPossibleSpots()
+
+function grabtheblocks(N)
+table2 = {}
+for i, v in pairs(N) do
+local region = Region3.new(v - Vector3.new(1, 1, 1), v + Vector3.new(1, 1, 1))
+for d, s in pairs(game.Workspace:FindPartsInRegion3(region, game.Players.LocalPlayer.Character, math.huge)) do
+if table.find(allBlocksInGame, s.Name) then
+table.insert(table2, s)
+end
+end
+end
+return table2
+end
+
+local zeBlocks = grabtheblocks(possibleSpots)
+
+
+for i, v in pairs(possibleSpots) do
+local par345r3t = Instance.new("Part", workspace)
+par345r3t.Name = "vdsgvgsdvgdsssssvgsdvgsd"
+par345r3t.Anchored = true
+par345r3t.CanCollide = false
+par345r3t.Material = Enum.Material.SmoothPlastic
+par345r3t.Transparency = 0.95
+par345r3t.Size = Vector3.new(3, 3, 3)
+par345r3t.Color = Color3.fromRGB(255, 255, 255)
+par345r3t.Position = v
+end
+
+for i = 1, #zeBlocks do
+if Stop == false then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(zeBlocks[i].Position + Vector3.new(0, 5, 0))
+repeat
+wait()
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_HIT_REQUEST"]:InvokeServer({["block"] = zeBlocks[i]})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_BLOCK_HIT_REQUEST"]:InvokeServer({["block"] = zeBlocks[i]})
+end)
+until not zeBlocks[i]:IsDescendantOf(game)
+end
+end
+
+_G.thingasdasdas = false
+sendChatMessage("Finished! (~" .. tostring(#possibleSpots) .. " blocks were affected)")
+for i,v in pairs(game.Workspace:GetChildren()) do
+if v.Name == "vdsgvgsdvgdsvgsdvgsd" or v.Name == "vdsgvgsdvgdsssssvgsdvgsd" or v.Name == "vdsgvgsdvgdsvsdsgsddsvgsd" then
+v:Destroy()
+end
+end
+end)
+
+Printer2:Cheat("Button", "Stop", function()
+Stop = true
+_G.thingasdasdas = false
+for i,v in pairs(game.Workspace:GetChildren()) do
+if v.Name == "vdsgvgsdvgdsvgsdvgsd" or v.Name == "vdsgvgsdvgdsssssvgsdvgsd" or v.Name == "vdsgvgsdvgdsvsdsgsddsvgsd" then
+v:Destroy()
+end
+end
+end)
+end
+
+local PersonsName;
+PersonsName = nil;
+InventoryView:Cheat("Textbox", "Name", function(Thing1233)
+for i,a in next, game:GetService("Players"):GetChildren() do
+if string.find(string.lower(a.Name),string.lower(Thing1233)) then
+PersonsName = a.Name
+end
+end
+for i,v in pairs(game.CoreGui:WaitForChild("nfkflburxaNwLHvJ4rwm").Container.Categories.Misc.L:WaitForChild("-// Inventory Spy //-").Container:GetChildren()) do
+if v.Name:match("Name:") or v.Name:match("Held Item:") or v.Name:match("Inventory:") or v.Name:match("lol") or v.Name == "lol2" then
+v:Destroy()
+end
+end
+InventoryView:Cheat('Label', "lol")
+InventoryView:Cheat('Label', "lol2")
+wait(.05)
+if PersonsName ~= "" or PersonsName ~= nil then
+local BackpackListlol = game.Players:FindFirstChild(PersonsName).Backpack:GetChildren()
+for i,v in pairs(game.CoreGui:WaitForChild("nfkflburxaNwLHvJ4rwm").Container.Categories.Misc.L:WaitForChild("-// Inventory Spy //-").Container:GetChildren()) do
+if v.Name == "lol" then
+v.Title.Text = tostring(PersonsName.."'s Inventory:")
+end
+end
+end
+for i,v in pairs(getItems(PersonsName)) do
+InventoryView:Cheat('Label', v)
+end
+end, {placeholder = "(Player Name)"})
+
+spawn(function()
+while wait(.001) do
+if PersonsName ~= nil then
+for i,v in pairs(game.CoreGui:WaitForChild("nfkflburxaNwLHvJ4rwm").Container.Categories.Misc.L:WaitForChild("-// Inventory Spy //-").Container:GetChildren()) do
+if v.Name == "lol2" then
+if game.Workspace:FindFirstChild(PersonsName) then
+if game.Workspace:FindFirstChild(PersonsName):FindFirstChildOfClass("Tool") then
+v.Title.Text = "Held Item: "..game.Workspace:WaitForChild(PersonsName):FindFirstChildOfClass("Tool").DisplayName.Value.." ("..game.Workspace:WaitForChild(PersonsName):FindFirstChildOfClass("Tool").Amount.Value..")"
+else
+v.Title.Text = "Held Item: Nothing"
+end
+end
+end
+end
+end
+end
+end)
+
+InventoryView:Cheat("Button", "Refresh", function()
+for i,v in pairs(game.CoreGui:WaitForChild("nfkflburxaNwLHvJ4rwm").Container.Categories.Misc.L:WaitForChild("-// Inventory Spy //-").Container:GetChildren()) do
+if v.Name:match("Name:") or v.Name:match("Held Item:") or v.Name:match("Inventory:") or v.Name:match("lol") then
+v:Destroy()
+end
+end
+end)
+
+function getItems(player)
+local a = {}
+for i,v in pairs(game:GetService('Players')[player].Backpack:GetChildren()) do
+table.insert(a, 'Name: '..v:FindFirstChild('DisplayName').Value.." | Amount: "..v:FindFirstChild('Amount').Value)
+end
+return a
+end
+
+
+local player = game:GetService("Players").LocalPlayer
+local character = player.Character or player.CharacterAdded:wait()
+
+function findNearDrops()
+local drops = {}
+local region = Region3.new(character.HumanoidRootPart.Position - Vector3.new(20, 20, 20), character.HumanoidRootPart.Position + Vector3.new(20, 20, 20))
+for i, v in pairs(game.Workspace:FindPartsInRegion3(region, character, math.huge)) do
+if v.Parent:IsA("Tool") then
+table.insert(drops, v.Parent)
+end
+end
+return drops
+end
+
+function findNearGrass()
+local ganer = {}
+local region = Region3.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position - Vector3.new(10, 10, 10), game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(10, 10, 10))
+for i, v in pairs(workspace:FindPartsInRegion3(region, game.Players.LocalPlayer.Character, math.huge)) do
+if v.Parent.Name == "grass" then
+table.insert(ganer, v.Parent)
+end
+end
+return ganer
+end
+
+function findNearSoil()
+local ganer = {}
+local region = Region3.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position - Vector3.new(10, 10, 10), game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(10, 10, 10))
+for i, v in pairs(workspace:FindPartsInRegion3(region, game.Players.LocalPlayer.Character, math.huge)) do
+if v.Name == "soil" then
+table.insert(ganer, v)
+end
+end
+return ganer
+end
+
+ItemStealing:Cheat(
+"Checkbox",
+"Collect Near Items",
+function(State)
+NearItems = State
+while NearItems do
+wait(.0001)
+for i,v in pairs(findNearDrops()) do
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_TOOL_PICKUP_REQUEST"]:InvokeServer({["tool"] = v})
+end)
+end
+end
+end)
+
+ItemStealing:Cheat(
+"Checkbox",
+"Collect Near Chest",
+function(State)
+NearC24hest = State
+while NearC24hest do
+wait(.0001)
+for i,v in pairs(PlayerIsland:FindFirstChild("Blocks"):GetChildren()) do
+if v.Name == "chestMedium" then
+if v:FindFirstChild("Contents"):FindFirstChildOfClass("Tool"):FindFirstChild("Amount") then
+if TeleporToChest then
+local OLDPOS = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+wait(.01)
+game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = v.CFrame * CFrame.new(0,3,0)
+wait(.1)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_CHEST_TRANSACTION"]:InvokeServer({
+["chest"] = v,
+["tool"] = v.Contents:FindFirstChildOfClass("Tool"),
+["action"] = "withdraw",
+["amount"] = v.Contents:FindFirstChildOfClass("Tool").Amount.Value
+})
+wait(.01)
+game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OLDPOS
+else
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_CHEST_TRANSACTION"]:InvokeServer({
+["chest"] = v,
+["tool"] = v.Contents:FindFirstChildOfClass("Tool"),
+["action"] = "withdraw",
+["amount"] = v.Contents:FindFirstChildOfClass("Tool").Amount.Value
+})
+end
+end
+end
+end
+end
+end)
+
+ItemStealing:Cheat(
+"Checkbox",
+"Auto-Claim Quest",
+function(State)
+ClaimQuest = State
+while ClaimQuest do
+wait(.0001)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_REDEEM_QUEST_REQUEST"]:InvokeServer({["merchantOwner"] = "general"})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_REDEEM_QUEST_REQUEST"]:InvokeServer({["merchantOwner"] = "banker"})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_REDEEM_QUEST_REQUEST"]:InvokeServer({["merchantOwner"] = "seeds"})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_REDEEM_QUEST_REQUEST"]:InvokeServer({["merchantOwner"] = "baker"})
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_REDEEM_QUEST_REQUEST"]:InvokeServer({["merchantOwner"] = "adventurer"})
+end
+end)
+
+ItemStealing:Cheat(
+"Checkbox",
+"Plow Near Grass",
+function(State)
+GrassPlow = State
+while GrassPlow do
+wait(.0001)
+for i,v in pairs(findNearGrass()) do
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_PLOW_BLOCK_REQUEST"]:InvokeServer({["block"] = v})
+end)
+end
+end
+end)
+
+ItemStealing:Cheat(
+"Checkbox",
+"Unplow Near Grass",
+function(State)
+GrassUNPlow = State
+while GrassUNPlow do
+wait(.0001)
+for i,v in pairs(findNearSoil()) do
+spawn(function()
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_PLOW_BLOCK_REQUEST"]:InvokeServer({["block"] = v})
+end)
+end
+end
+end)
+
+ItemStealing:Cheat(
+"Checkbox",
+"Clear Island Spawnables",
+function(State)
+Spawnables = State
+while Spawnables do
+wait(.1)
+for i,v in pairs(PlayerIsland.Blocks:GetChildren()) do
+if Spawnables then
+if v.Name == "tallGrass" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
+game.ReplicatedStorage.Remotes.Functions["CLIENT_BLOCK_HIT_REQUEST"]:InvokeServer({["block"] = v}) 
+wait(.05)
+game.ReplicatedStorage.Remotes.Functions["CLIENT_BLOCK_HIT_REQUEST"]:InvokeServer({["block"] = v}) 
+wait(.05)
+end
+if v.Name == "yellowFlowers" or v.Name == "redFlowers" or v.Name == "blueFlowers" then
+for i = 1,3 do
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
+game.ReplicatedStorage.Remotes.Functions["CLIENT_BLOCK_HIT_REQUEST"]:InvokeServer({["block"] = v}) 
+wait(.05)
+game.ReplicatedStorage.Remotes.Functions["CLIENT_BLOCK_HIT_REQUEST"]:InvokeServer({["block"] = v}) 
+wait(.05)
+end
+end
+if v.Name == "naturalRock1" then
+for i = 1,3 do
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
+game.ReplicatedStorage.Remotes.Functions["CLIENT_BLOCK_HIT_REQUEST"]:InvokeServer({["block"] = v}) 
+wait(.05)
+game.ReplicatedStorage.Remotes.Functions["CLIENT_BLOCK_HIT_REQUEST"]:InvokeServer({["block"] = v}) 
+wait(.05)
+end
+end
+end
+end
+end
+end)
+
+ItemStealing:Cheat(
+"Checkbox",
+"Server Annoy (LOUD)",
+function(State)
+Annoy = State
+while Annoy do
+wait(.15)
+for i,v in pairs(game.Workspace:GetChildren()) do
+if v.Name == "Sounds" then
+for i,n in pairs(v:GetChildren()) do
+if n:IsA("Sound") then
+n.Volume = 10
+n:Play()
+if not Annoy then
+n:Stop()
+n.Volume = 1
+end
+end
+end
+end
+end
+end
+end)
+
+DropItems:Cheat("Label", "Hold a item before setting an amount")
+
+DropItems:Cheat("Textbox", "Amount", function(amountThing3r)
+if game.Workspace[game.Players.LocalPlayer.Name]:FindFirstChildOfClass("Tool") then
+if game.Workspace[game.Players.LocalPlayer.Name]:FindFirstChildOfClass("Tool").Amount.Value < tonumber(amountThing3r) then
+local zeAmountThing = game.Workspace[game.Players.LocalPlayer.Name]:FindFirstChildOfClass("Tool").Amount.Value
+local A_1 = 
+{
+	["tool"] = game.Workspace[game.Players.LocalPlayer.Name]:FindFirstChildOfClass("Tool"), 
+	["amount"] = zeAmountThing
+}
+local Event = game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_DROP_TOOL_REQUEST"]
+Event:InvokeServer(A_1)
+else
+local A_1 = 
+{
+	["tool"] = game.Workspace[game.Players.LocalPlayer.Name]:FindFirstChildOfClass("Tool"), 
+	["amount"] = tonumber(amountThing3r)
+}
+local Event = game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_DROP_TOOL_REQUEST"]
+Event:InvokeServer(A_1)
+end
+end
+end, {placeholder = "(Amount)"})
+
+ItemStealing:Cheat(
+"Checkbox",
+"Auto-Refill Vending",
+function(State)
+RefillVending = State
+while RefillVending do
+wait(.0001)
+local item = nil;
+for i,v in pairs(PlayerIsland.Blocks:GetChildren()) do
+if v.Name == "vendingMachine" then
+if v:FindFirstChild("SellingContents"):FindFirstChildOfClass("Tool") then
+item = v:FindFirstChild("SellingContents"):FindFirstChildOfClass("Tool").Name
+if game:GetService("Players").LocalPlayer.Backpack:FindFirstChild(item) then
+local A_1 = 
+{
+	["tool"] = game:GetService("Players").LocalPlayer.Backpack:FindFirstChild(item), 
+	["vendingMachine"] = v, 
+	["action"] = "deposit", 
+	["amount"] = game:GetService("Players").LocalPlayer.Backpack:FindFirstChild(item):FindFirstChild("Amount").Value
+}
+local Event = game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_VENDING_MACHINE_EDIT_TRANSACTION"]
+Event:InvokeServer(A_1)
+end
+end
+end
+end
+end
+end)
+
+ItemStealing:Cheat(
+"Checkbox",
+"Invite All to Island",
+function(State)
+InviteAll = State
+while InviteAll do
+wait(.0001)
+for i,v in pairs(game.Players:GetChildren()) do
+if v.Name ~= "GqcciBoi" then
+local A_1 = 
+{
+	["accessLevel"] = 1, 
+	["player"] = game:GetService("Players")[v.Name]
+}
+local Event = game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_CHANGE_ISLAND_ACCESS_LEVEL"]
+Event:InvokeServer(A_1)
+end
+end
+end
+end)
+
+ItemStealing:Cheat(
+"Checkbox",
+"Kick All off Island",
+function(State)
+KickAll = State
+while KickAll do
+wait(.0001)
+for i,v in pairs(game.Players:GetChildren()) do
+if v.Name ~= "GqcciBoi" then
+local A_1 = 
+{
+	["accessLevel"] = 0, 
+	["player"] = game:GetService("Players")[v.Name]
+}
+local Event = game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_CHANGE_ISLAND_ACCESS_LEVEL"]
+Event:InvokeServer(A_1)
+end
+end
+end
+end)
+
+function findNearSlimes()
+local slimes = {}
+local region = Region3.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position - Vector3.new(20, 20, 20), game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(20, 20, 20))
+for i, v in pairs(game.Workspace:FindPartsInRegion3(region, game.Players.LocalPlayer.Character, math.huge)) do
+if v.Parent:IsA("Model") then
+table.insert(slimes, v.Parent)
+end
+end
+return slimes
+end
+
+KillMobs:Cheat(
+"Checkbox",
+"Killaura",
+function(State)
+Killaura = State
+while Killaura do
+wait(.0001)
+for i,v in pairs(findNearSlimes()) do
+critthing = math.random(1,3) == 1 and true or false
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_SWING_SWORD"]:InvokeServer({["hitUnit"] = v, ["crit"] = critthing})
+end
+end
+end)
+
+local critthing = nil;
+local AlsoDoingSlime = nil;
+local AlsoDoingBuffalo = nil;
+local AlsoDoingWizard = nil;
+local AlsoDoingSkorps = nil;
+_G.ToSeeIfEnabled = false
+
+spawn(function()
+while wait(.001) do
+if slimes or Buffalo or LizardWizard or Skorps then
+game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(11)
+end
+end
+end)
+
+function SlimeThing()
+for i, v in pairs(game.Workspace.WildernessIsland.Entities:GetChildren()) do
+if v.Name == "slimePink" or v.Name == "slimeBlue" or v.Name == "slime" then
+repeat
+wait(.00001)
+_G.ToSeeIfEnabled = false
+critthing = math.random(1,3) == 1 and true or false
+spawn(function()
+for i,v in pairs(findNearSlimes()) do
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_SWING_SWORD"]:InvokeServer({["hitUnit"] = v, ["crit"] = critthing})
+end
+end)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v:WaitForChild("HumanoidRootPart").CFrame * CFrame.new(0,-5,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_SWING_SWORD"]:InvokeServer({["hitUnit"] = v, ["crit"] = critthing})
+until not v:IsDescendantOf(game) or not slimes or not AlsoDoingBuffalo or not AlsoDoingWizard or not AlsoDoingSkorps
+elseif not game.Workspace.WildernessIsland.Entities:FindFirstChild("slimePink") and not game.Workspace.WildernessIsland.Entities:FindFirstChild("slimeBlue") and not game.Workspace.WildernessIsland.Entities:FindFirstChild("slime") then
+teleportafter()
+_G.ToSeeIfEnabled = true
+end
+end
+end
+
+function BuffaloThing()
+for i, v in pairs(game.Workspace.Entities:GetChildren()) do
+if v.Name == "buffalkor" then
+repeat
+wait(.00001)
+_G.ToSeeIfEnabled = false
+critthing = math.random(1,3) == 1 and true or false
+spawn(function()
+for i,v in pairs(findNearSlimes()) do
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_SWING_SWORD"]:InvokeServer({["hitUnit"] = v, ["crit"] = critthing})
+end
+end)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v:WaitForChild("HumanoidRootPart").CFrame * CFrame.new(0,-5,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_SWING_SWORD"]:InvokeServer({["hitUnit"] = v, ["crit"] = critthing})
+until not v:IsDescendantOf(game) or not buffalo or not AlsoDoingSlime or not AlsoDoingWizard or not AlsoDoingSkorps
+elseif not game.Workspace.Entities:FindFirstChild("buffalkor") then
+teleportafter()
+_G.ToSeeIfEnabled = true
+end
+end
+end
+
+function WizardThing()
+for i, v in pairs(game.Workspace.Entities:GetChildren()) do
+if v.Name == "wizardLizard" then
+repeat
+wait(.00001)
+_G.ToSeeIfEnabled = false
+critthing = math.random(1,3) == 1 and true or false
+spawn(function()
+for i,v in pairs(findNearSlimes()) do
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_SWING_SWORD"]:InvokeServer({["hitUnit"] = v, ["crit"] = critthing})
+end
+end)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v:WaitForChild("HumanoidRootPart").CFrame * CFrame.new(0,-5,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_SWING_SWORD"]:InvokeServer({["hitUnit"] = v, ["crit"] = critthing})
+until not v:IsDescendantOf(game) or not LizardWizard or not AlsoDoingSlime or not AlsoDoingBuffalo or not AlsoDoingSkorps
+elseif not game.Workspace.Entities:FindFirstChild("wizardLizard") then
+teleportafter()
+_G.ToSeeIfEnabled = true
+end
+end
+end
+
+function SkorpsThing()
+for i, v in pairs(game.Workspace.Entities:GetChildren()) do
+if v.Name == "skorpRuby" or v.Name == "skorpGold" or v.Name == "skorpIron" then
+repeat
+wait(.00001)
+_G.ToSeeIfEnabled = false
+critthing = math.random(1,3) == 1 and true or false
+spawn(function()
+for i,v in pairs(findNearSlimes()) do
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_SWING_SWORD"]:InvokeServer({["hitUnit"] = v, ["crit"] = critthing})
+end
+end)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v:WaitForChild("HumanoidRootPart").CFrame * CFrame.new(0,-3,0)
+game:GetService("ReplicatedStorage").Remotes.Functions["CLIENT_SWING_SWORD"]:InvokeServer({["hitUnit"] = v, ["crit"] = critthing})
+until not v:IsDescendantOf(game) or not Skorps or not AlsoDoingSlime or not AlsoDoingBuffalo or not AlsoDoingWizard
+elseif not game.Workspace.Entities:FindFirstChild("skorpRuby") and not game.Workspace.Entities:FindFirstChild("skorpGold") and not game.Workspace.Entities:FindFirstChild("skorpIron") then
+teleportafter()
+_G.ToSeeIfEnabled = true
+end
+end
+end
+
+function teleportafter()
+game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = PlayerIsland:WaitForChild("SpawnLocation").CFrame * CFrame.new(0,7,0)
+end
+
+KillMobs:Cheat(
+"Checkbox",
+"Farm Slimes (USE A VIP)",
+function(State)
+slimes = State
+while slimes do
+wait(.0001)
+AlsoDoingSlime = true
+if AlsoDoingBuffalo then
+return
+end
+if AlsoDoingWizard then
+return
+end
+if AlsoDoingSkorps then
+return
+end
+if game:GetService("Players").LocalPlayer.Character:FindFirstChild("CurrentHealth") then
+game:GetService("Players").LocalPlayer.Character.CurrentHealth:Destroy()
+end
+SlimeThing()
+end
+end)
+
+KillMobs:Cheat(
+"Checkbox",
+"Farm Buffalkor (USE A VIP)",
+function(State)
+buffalo = State
+while buffalo do
+wait(.0001)
+AlsoDoingBuffalo = true
+if AlsoDoingSlime then
+return
+end
+if AlsoDoingWizard then
+return
+end
+if AlsoDoingSkorps then
+return
+end
+if game:GetService("Players").LocalPlayer.Character:FindFirstChild("CurrentHealth") then
+game:GetService("Players").LocalPlayer.Character.CurrentHealth:Destroy()
+end
+BuffaloThing()
+end
+end)
+
+KillMobs:Cheat(
+"Checkbox",
+"Farm Wizards (USE A VIP)",
+function(State)
+LizardWizard = State
+while LizardWizard do
+wait(.0001)
+AlsoDoingWizard = true
+if AlsoDoingSlime then
+return
+end
+if AlsoDoingBuffalo then
+return
+end
+if AlsoDoingSkorps then
+return
+end
+if game:GetService("Players").LocalPlayer.Character:FindFirstChild("CurrentHealth") then
+game:GetService("Players").LocalPlayer.Character.CurrentHealth:Destroy()
+end
+WizardThing()
+end
+end)
+
+KillMobs:Cheat(
+"Checkbox",
+"Farm Skorps (USE A VIP)",
+function(State)
+Skorps = State
+while Skorps do
+wait(.0001)
+AlsoDoingSkorps = true
+if AlsoDoingSlime then
+return
+end
+if AlsoDoingBuffalo then
+return
+end
+if AlsoDoingWizard then
+return
+end
+if game:GetService("Players").LocalPlayer.Character:FindFirstChild("CurrentHealth") then
+game:GetService("Players").LocalPlayer.Character.CurrentHealth:Destroy()
+end
+SkorpsThing()
+end
+end)
+
+
+spawn(function()
+while wait(.001) do
+if buffalo or LizardWizard or slimes or Skorps then
+if buffalo == false then
+AlsoDoingBuffalo = false
+end
+if LizardWizard == false then
+AlsoDoingWizard = false
+end
+if slimes == false then
+AlsoDoingSlime = false
+end
+if Skorps == false then
+AlsoDoingSkorps = false
+end
+if game:GetService("Players").LocalPlayer.Character:FindFirstChild("CurrentHealth") then
+game:GetService("Players").LocalPlayer.Character.CurrentHealth:Destroy()
+end
+
+--//Buffalo
+if AlsoDoingBuffalo and AlsoDoingSlime then
+BuffaloThing()
+if _G.ToSeeIfEnabled == true then
+SlimeThing()
+end
+end
+--//lizard
+if AlsoDoingWizard and AlsoDoingSlime then
+WizardThing()
+if _G.ToSeeIfEnabled == true then
+SlimeThing()
+end
+end
+if AlsoDoingWizard and AlsoDoingBuffalo then
+WizardThing()
+if _G.ToSeeIfEnabled == true then
+BuffaloThing()
+end
+end
+--//Skorps
+if AlsoDoingSkorps and AlsoDoingSlime then
+SkorpsThing()
+if _G.ToSeeIfEnabled == true then
+SlimeThing()
+end
+end
+if AlsoDoingSkorps and AlsoDoingBuffalo then
+SkorpsThing()
+if _G.ToSeeIfEnabled == true then
+BuffaloThing()
+end
+end
+if AlsoDoingSkorps and AlsoDoingWizard then
+SkorpsThing()
+if _G.ToSeeIfEnabled == true then
+WizardThing()
+end
+end
+end
+end
+end)
