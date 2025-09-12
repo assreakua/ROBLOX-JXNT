@@ -1,0 +1,617 @@
+function Notify(titletxt, text, time)
+    local GUI = Instance.new("ScreenGui")
+    local Main = Instance.new("Frame", GUI)
+    local title = Instance.new("TextLabel", Main)
+    local message = Instance.new("TextLabel", Main)
+    GUI.Name = "Notification"
+    GUI.Parent = game.CoreGui
+    Main.Name = "MainFrame"
+    Main.BackgroundColor3 = Color3.new(0.156863, 0.156863, 0.156863)
+    Main.BorderSizePixel = 0
+    Main.Position = UDim2.new(1, 5, 0, 50)
+    Main.Size = UDim2.new(0, 330, 0, 100)
+
+    title.BackgroundColor3 = Color3.new(0, 0, 0)
+    title.BackgroundTransparency = 0.89999997615814
+    title.Size = UDim2.new(1, 0, 0, 30)
+    title.Font = Enum.Font.SourceSansSemibold
+    title.Text = titletxt
+    title.TextColor3 = Color3.new(1, 1, 1)
+    title.TextSize = 17
+    
+    message.BackgroundColor3 = Color3.new(0, 0, 0)
+    message.BackgroundTransparency = 1
+    message.Position = UDim2.new(0, 0, 0, 30)
+    message.Size = UDim2.new(1, 0, 1, -30)
+    message.Font = Enum.Font.SourceSansLight
+    message.Text = text
+    message.TextColor3 = Color3.new(1, 1, 1)
+    message.TextSize = 16
+
+    wait(0.1)
+    Main:TweenPosition(UDim2.new(1, -330, 0, 50), "Out", "Sine", 0.5)
+    wait(time)
+    Main:TweenPosition(UDim2.new(1, 5, 0, 50), "Out", "Sine", 0.5)
+    wait(0.6)
+    GUI:Destroy();
+end
+
+local vu = game:GetService("VirtualUser")
+game:GetService("Players").LocalPlayer.Idled:connect(
+function()
+vu:Button2Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+wait(1)
+vu:Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+end) 
+
+if game.CoreGui:FindFirstChild("PurchasePromptApp") then
+game.CoreGui.PurchasePromptApp:Destroy()
+end
+
+if game.CoreGui:FindFirstChild("ScreenGui") then
+game:GetService("CoreGui").ScreenGui:Destroy()
+end
+
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(313.509521, 35186.2734, -452.620514)
+wait(1.5)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(313.509521, 35186.2734, -452.620514)
+game.ReplicatedStorage.RE:FireServer("UnlockWorld", 15)
+
+local library = loadstring(game:HttpGet("https://pastebin.com/raw/CkyR8ePz",true))()
+library.options.underlinecolor = "rainbow"
+local Functions = library:CreateWindow("Functions")
+local AutoBuy = library:CreateWindow("Auto-Buy")
+local Teleports = library:CreateWindow("Teleports")
+local EggThings = library:CreateWindow("Pet Options")
+
+-- Toggle Area
+Functions:Section("-= Farming Stuff =-")
+local Throw = Functions:Toggle("Auto-Throw", {flag = "AutoThrow"})
+local Sell = Functions:Toggle("Auto-Sell", {flag = "Sell"})
+AutoBuy:Section("-= Farming Stuff =-")
+local BuyRank = AutoBuy:Toggle("Auto-Rank", {flag = "BuyRank"})
+local BuyBlade = AutoBuy:Toggle("Auto-Blade", {flag = "BuyBlade"})
+local BuyEnergy = AutoBuy:Toggle("Auto-Energy", {flag = "BuyEnergy"})
+Functions:Section("-= Boss Stuff =-")
+local BossD = Functions:Toggle("Farm Leprechaun", {flag = "Boss3"})
+local BossT = Functions:Toggle("Farm Rhino King", {flag = "Boss1"})
+local BossD = Functions:Toggle("Farm Evil Fox", {flag = "Boss2"})
+Functions:Section("-= Other Stuff =-")
+local Kingz = Functions:Toggle("Auto-Koth", {flag = "King"})
+local ClaimQuest = Functions:Toggle("Auto-Claim Quest", {flag = "Quest"})
+AutoBuy:Section("-= Perk Stuff =-")
+local Perk1 = AutoBuy:Toggle("Auto-Perk #1", {flag = "Perk1"})
+local Perk2 = AutoBuy:Toggle("Auto-Perk #2", {flag = "Perk2"})
+local Perk3 = AutoBuy:Toggle("Auto-Perk #3", {flag = "Perk3"})
+AutoBuy:Section("-= Other Stuff =-")
+local BuyJumps = AutoBuy:Toggle("Auto-Jumps", {flag = "BuyJumps"})
+
+-- Auto-Throw
+spawn(function()
+while wait(.0001) do
+if Functions.flags.AutoThrow then
+if game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart") then 
+local oh1 = "Throw"
+local oh2 = Vector3.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position) + Vector3.new(0,-9999,0)
+game:GetService("ReplicatedStorage").RE:FireServer(oh1, oh2)
+game:GetService("ReplicatedStorage").RE:FireServer(oh1, oh2)
+game:GetService("ReplicatedStorage").RE:FireServer(oh1, oh2)
+game:GetService("ReplicatedStorage").RE:FireServer(oh1, oh2)
+game:GetService("ReplicatedStorage").RE:FireServer(oh1, oh2)
+end
+end
+end
+end)
+
+-- Auto-Sell
+spawn(function()
+while wait(.0001) do
+if Functions.flags.Sell then
+if game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart") then 
+game.Workspace.Ignore.Rings:FindFirstChild("15Sell").Collider.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+wait(.00001)
+game.Workspace.Ignore.Rings:FindFirstChild("15Sell").Collider.CFrame = game.Workspace.Part.CFrame
+end
+end
+end
+end)
+
+-- Auto-Rank
+spawn(function()
+while wait(.0001) do
+if AutoBuy.flags.BuyRank then
+if game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart") then 
+local A_1 = "BuyRank"
+local Event = game:GetService("ReplicatedStorage").RF
+Event:InvokeServer(A_1)
+end
+end
+end
+end)
+
+-- Auto-Blade
+spawn(function()
+while wait(.0001) do
+if AutoBuy.flags.BuyBlade then
+if game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart") then 
+local oh1 = "BuyBlade"
+local oh2 = true
+game:GetService("ReplicatedStorage").RF:InvokeServer(oh1, oh2)
+end
+end
+end
+end)
+
+-- Auto-Energy
+spawn(function()
+while wait(.0001) do
+if AutoBuy.flags.BuyEnergy then
+if game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart") then 
+local oh1 = "BuyEnergy"
+local oh2 = true
+game:GetService("ReplicatedStorage").RF:InvokeServer(oh1, oh2)
+end
+end
+end
+end)
+
+-- Auto-Buy Jump
+spawn(function()
+while wait(.0001) do
+if AutoBuy.flags.BuyJump then
+if game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart") then 
+local A_1 = "BuyJump"
+local Event = game:GetService("ReplicatedStorage").RF
+Event:InvokeServer(A_1)
+end
+end
+end
+end)
+
+-- Auto-King
+spawn(function()
+while wait(.0001) do
+if Functions.flags.King then
+if game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart") then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-306.586548, 33.0765457, -463.599609)
+end
+end
+end
+end)
+
+-- Auto-Boss
+spawn(function()
+while wait(.0001) do
+if Functions.flags.Boss1 then
+if game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart") then 
+if game.Workspace.Boss:WaitForChild("Rhino King"):FindFirstChild("HumanoidRootPart") then
+game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(11)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Workspace.Boss:FindFirstChild("Rhino King").HumanoidRootPart.CFrame + Vector3.new(0,50,0)
+end
+end
+end
+end
+end)
+
+-- Auto-Boss2
+spawn(function()
+while wait(.0001) do
+if Functions.flags.Boss2 then
+if game.Workspace.Boss:WaitForChild("Evil Fox"):FindFirstChild("HumanoidRootPart") then
+if game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart") then 
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Workspace.Boss:FindFirstChild("Evil Fox").HumanoidRootPart.CFrame + Vector3.new(0,40,0)
+game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(11)
+end
+end
+end
+end
+end)
+
+-- Auto-Boss3
+spawn(function()
+while wait(.0001) do
+if Functions.flags.Boss3 then
+if game.Workspace.Boss:WaitForChild("Leprechaun"):FindFirstChild("HumanoidRootPart") then
+if game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart") then 
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Workspace.Boss:FindFirstChild("Leprechaun").HumanoidRootPart.CFrame + Vector3.new(0,40,0)
+game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(11)
+end
+end
+end
+end
+end)
+
+spawn(function()
+while wait(15) do
+if Functions.flags.Boss1 then
+if game.Workspace.Boss:FindFirstChild("Rhino King") then
+else
+print("Waiting for Rhino King to spawn bruh...")
+end
+end
+if Functions.flags.Boss2 then
+if game.Workspace.Boss:FindFirstChild("Evil Fox") then 
+else
+print("Waiting for Evil Fox to spawn bruh...")
+end
+end
+if Functions.flags.Boss3 then
+if game.Workspace.Boss:FindFirstChild("Leprechaun") then
+else
+print("Waiting for Leprechaun to spawn bruh...")
+end
+end
+end
+end)
+
+-- Auto-Claim Quest
+spawn(function()
+while wait(20) do
+if Functions.flags.Quest then
+local A_1 = "QuestCoins"
+local Event = game:GetService("ReplicatedStorage").RE
+Event:FireServer(A_1)
+local A_1 = "QuestBoss"
+local Event = game:GetService("ReplicatedStorage").RE
+Event:FireServer(A_1)
+local A_1 = "QuestHours"
+local Event = game:GetService("ReplicatedStorage").RE
+Event:FireServer(A_1)
+local A_1 = "QuestKills"
+local Event = game:GetService("ReplicatedStorage").RE
+Event:FireServer(A_1)
+end
+end
+end)
+
+-- INF Jump
+local Jump = Functions:Button("Inf Jump", function()
+game:GetService("Players").LocalPlayer.Data.GP.InfiniteJump.Value = true
+end)
+
+-- Hide Name
+local NameHide = Functions:Button("Hide Name", function()
+game:GetService("Players").LocalPlayer.Character.Head.Info.Enabled = false
+end)
+
+-- Give Chest  
+local Chest  = Functions:Button("Give Chest", function()
+local Event = game:GetService("ReplicatedStorage").RF
+Event:InvokeServer("Collect", "1")
+local Event = game:GetService("ReplicatedStorage").RF
+Event:InvokeServer("Collect", "2")
+local Event = game:GetService("ReplicatedStorage").RF
+Event:InvokeServer("Collect", "3")
+local Event = game:GetService("ReplicatedStorage").RF
+Event:InvokeServer("Collect", "4")
+local Event = game:GetService("ReplicatedStorage").RF
+Event:InvokeServer("Collect", "5")
+local Event = game:GetService("ReplicatedStorage").RF
+Event:InvokeServer("Collect", "6")
+end)
+
+-- Speed
+local Gamepassesz = Functions:Button("Double Speed", function()
+game:GetService("Players").LocalPlayer.Data.GP.DoubleSpeed.Value = true
+end)
+
+local EggList = {}
+for i,c in pairs(game:GetService("Workspace").Eggs:GetChildren()) do
+table.insert(EggList, c.Name)
+end
+
+EggThings:Section("-= Pet Opening =-")
+EggThings:Dropdown("Egg Opener", {location = _G, flag = "Egg", list = EggList,
+}, function(new) print("Selected Egg:", new) end)
+local Eggz = EggThings:Toggle("Open Eggs", {flag = "TEgg"}) 
+
+spawn(function()
+while wait(.0001) do
+if EggThings.flags.TEgg then
+local A_1 = "BuyEgg"
+local A_2 = _G.Egg
+local Event = game:GetService("ReplicatedStorage").RF
+Event:InvokeServer(A_1, A_2)
+end
+end
+end)
+
+EggThings:Section("-= Pet Evolving/Selling =-")
+local Evolvezs = EggThings:Toggle("Evolve All Pets", {flag = "Evolve"}) 
+local Sellz1 = EggThings:Toggle("Sell All Clouds", {flag = "Sell1"}) 
+local Sellz2 = EggThings:Toggle("Sell All Ninja Rhinos", {flag = "Sell2"}) 
+local Sellz3 = EggThings:Toggle("Sell All Dominus", {flag = "Sell3"}) 
+local Sellz4 = EggThings:Toggle("Sell All Ninja Slimes", {flag = "Sell4"}) 
+local Sellz5 = EggThings:Toggle("Sell All Angelic Deer", {flag = "Sell5"}) 
+local Sellz6 = EggThings:Toggle("Sell All Angels", {flag = "Sell6"}) 
+
+spawn(function()
+while wait(.0001) do
+if EggThings.flags.Evolve then
+game:GetService("ReplicatedStorage").RF:InvokeServer("EvolveAll")
+end
+end
+end)
+
+spawn(function()
+while wait(.0001) do
+if AutoBuy.flags.Perk1 then
+local A_1 = "BuyPerk"
+local A_2 = "1"
+local Event = game:GetService("ReplicatedStorage").RF
+Event:InvokeServer(A_1, A_2)
+end
+end
+end)
+
+spawn(function()
+while wait(.0001) do
+if AutoBuy.flags.Perk2 then
+local A_1 = "BuyPerk"
+local A_2 = "2"
+local Event = game:GetService("ReplicatedStorage").RF
+Event:InvokeServer(A_1, A_2)
+end
+end
+end)
+
+spawn(function()
+while wait(.0001) do
+if AutoBuy.flags.Perk3 then
+local A_1 = "BuyPerk"
+local A_2 = "3"
+local Event = game:GetService("ReplicatedStorage").RF
+Event:InvokeServer(A_1, A_2)
+end
+end
+end)
+
+Teleports:Section("-= Islands Teleports =-")
+Teleports:Dropdown("Island Teleports", {
+location = _G;
+flag = "islands";
+list = {
+"Spawn";
+"Moon";
+"Forest";
+"Aqua";
+"Ninja";
+"Volcano";
+"Winter";
+"Cyber";
+"Candy";
+"Electric";
+"Raidoactive";
+"Plasma";
+"Demonic";
+"Monochrome";
+"Angelic";
+}
+}, function(new)
+print("Selected Island:", new)
+if new == "Spawn" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(187.360229, -75.5600739, -621.247559)
+end
+if new == "Moon" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(182.670395, 616.22522, -680.402283)
+end
+if new == "Forest" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(169.071045, 1831.47522, -590.760681)
+end
+if new == "Aqua" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(159.165817, 3386.05518, -533.616638)
+end
+if new == "Ninja" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(215.911362, 5361.41406, -503.041199)
+end
+if new == "Volcano" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(159.414352, 8587.89551, -409.888123)
+end
+if new == "Winter" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(145.006134, 11498.6504, -356.598633)
+end
+if new == "Cyber" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(178.782104, 13539.2412, -374.439667)
+end
+if new == "Candy" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(216.789261, 15607.7656, -370.945038)
+end
+if new == "Electric" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(225.867691, 16790.5313, -393.079132)
+end
+if new == "Radioactive" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(200.743805, 20635.8184, -451.678986)
+end
+if new == "Plasma" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(207.741913, 24607.6484, -436.679108)
+end
+if new == "Demonic" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(206.813934, 27758.0547, -444.948486)
+end
+if new == "Monochrome" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(208.512924, 31420.8359, -490.654053)
+end
+if new == "Angelic" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(313.509521, 35186.2734, -452.620514)
+end
+end)
+
+-- Island Unlocker
+local IslandUnlocker = Teleports:Button("Unlock Islands", function()
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(182.670395, 616.22522, -680.402283)
+game.ReplicatedStorage.RE:FireServer("UnlockWorld", 1)
+wait(.5)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(169.071045, 1831.47522, -590.760681)
+game.ReplicatedStorage.RE:FireServer("UnlockWorld", 2)
+wait(.5)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(159.165817, 3386.05518, -533.616638)
+game.ReplicatedStorage.RE:FireServer("UnlockWorld", 3)
+wait(.5)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(215.911362, 5361.41406, -503.041199)
+game.ReplicatedStorage.RE:FireServer("UnlockWorld", 4)
+wait(.5)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(159.414352, 8587.89551, -409.888123)
+game.ReplicatedStorage.RE:FireServer("UnlockWorld", 5)
+wait(.5)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(145.006134, 11498.6504, -356.598633)
+game.ReplicatedStorage.RE:FireServer("UnlockWorld", 6)
+wait(.5)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(178.782104, 13539.2412, -374.439667)
+game.ReplicatedStorage.RE:FireServer("UnlockWorld", 7)
+wait(.5)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(216.789261, 15607.7656, -370.945038)
+game.ReplicatedStorage.RE:FireServer("UnlockWorld", 8)
+wait(.5)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(225.867691, 16790.5313, -393.079132)
+game.ReplicatedStorage.RE:FireServer("UnlockWorld", 9)
+wait(.5)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(200.743805, 20635.8184, -451.678986)
+game.ReplicatedStorage.RE:FireServer("UnlockWorld", 10)
+wait(.5)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(207.741913, 24607.6484, -436.679108)
+game.ReplicatedStorage.RE:FireServer("UnlockWorld", 11)
+wait(.5)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(206.813934, 27758.0547, -444.948486)
+game.ReplicatedStorage.RE:FireServer("UnlockWorld", 12)
+wait(.5)
+game.ReplicatedStorage.RE:FireServer("UnlockWorld", 13)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(187.360229, -75.5600739, -621.247559)
+wait(.5)
+game.ReplicatedStorage.RE:FireServer("UnlockWorld", 14)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(187.360229, -75.5600739, -621.247559)
+wait(.5)
+game.ReplicatedStorage.RE:FireServer("UnlockWorld", 15)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(313.509521, 35186.2734, -452.620514)
+end)
+
+Teleports:Section("-= Random Areas =-")
+Teleports:Dropdown("Island Teleports", {
+location = _G;
+flag = "islands";
+list = {
+"Shop";
+"Training Area";
+"Koth Area #1";
+"Koth Area #2";
+}
+}, function(new)
+print("Selected Area:", new)
+if new == "Shop" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(249.699707, -75.5443344, -652.494751)
+end
+if new == "Training Area" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-20.3155193, -65.8434753, -792.728088)
+end
+if new == "Koth Area #1" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(363.726013, -49.5014648, -844.866211)
+end
+if new == "Koth Area #2" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-304.911591, 33.0687332, -460.82959)
+end
+end)
+
+spawn(function()
+while wait(.0001) do
+if EggThings.flags.Sell1 then
+for i,v in pairs(game.Players.LocalPlayer.Data.Pets:GetDescendants()) do
+for i,b in pairs(v:GetChildren()) do 
+if b.Name == "Tag" then
+if b.Value == "Cloud" then
+game.ReplicatedStorage.RF:InvokeServer("Sell", v)
+end
+end
+end
+end
+end
+end
+end)
+
+spawn(function()
+while wait(.0001) do
+if EggThings.flags.Sell2 then
+for i,v in pairs(game.Players.LocalPlayer.Data.Pets:GetDescendants()) do
+for i,b in pairs(v:GetChildren()) do 
+if b.Name == "Tag" then
+if b.Value == "Angelic Ninja Rhinos" then
+game.ReplicatedStorage.RF:InvokeServer("Sell", v)
+end
+end
+end
+end
+end
+end
+end)
+
+spawn(function()
+while wait(.0001) do
+if EggThings.flags.Sell3 then
+for i,v in pairs(game.Players.LocalPlayer.Data.Pets:GetDescendants()) do
+for i,b in pairs(v:GetChildren()) do 
+if b.Name == "Tag" then
+if b.Value == "Angelic Dominus" then
+game.ReplicatedStorage.RF:InvokeServer("Sell", v)
+end
+end
+end
+end
+end
+end
+end)
+
+spawn(function()
+while wait(.0001) do
+if EggThings.flags.Sell4 then
+for i,v in pairs(game.Players.LocalPlayer.Data.Pets:GetDescendants()) do
+for i,b in pairs(v:GetChildren()) do 
+if b.Name == "Tag" then
+if b.Value == "Angelic Ninja Slimes" then
+game.ReplicatedStorage.RF:InvokeServer("Sell", v)
+end
+end
+end
+end
+end
+end
+end)
+
+spawn(function()
+while wait(.0001) do
+if EggThings.flags.Sell5 then
+for i,v in pairs(game.Players.LocalPlayer.Data.Pets:GetDescendants()) do
+for i,b in pairs(v:GetChildren()) do 
+if b.Name == "Tag" then
+if b.Value == "Angelic Deer" then
+game.ReplicatedStorage.RF:InvokeServer("Sell", v)
+end
+end
+end
+end
+end
+end
+end)
+
+spawn(function()
+while wait(.0001) do
+if EggThings.flags.Sell6 then
+for i,v in pairs(game.Players.LocalPlayer.Data.Pets:GetDescendants()) do
+for i,b in pairs(v:GetChildren()) do 
+if b.Name == "Tag" then
+if b.Value == "Angel" then
+game.ReplicatedStorage.RF:InvokeServer("Sell", v)
+end
+end
+end
+end
+end
+end
+end)
+
+local Script = getsenv(game.workspace[game:GetService("Players").LocalPlayer.Name]:WaitForChild("Tool"):WaitForChild("Throw"))
+spawn(function()
+while wait(.0001) do 
+Script.nextShot = 0.000001
+Script.fireRate = 0.000001
+end
+end)
+
+Notify("Blade Throwing Simulator", "Created by Jxnt#9946", 15)
