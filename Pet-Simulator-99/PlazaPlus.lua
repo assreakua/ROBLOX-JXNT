@@ -888,8 +888,8 @@ local function GlobalNotification(CurrentInfo, FindInfo, Percent)
                 ["description"] = table.concat(Description, "\n"),
                 ["timestamp"] = DateTime.now():ToIsoDate(),
                 ["footer"] = {
-                    ["icon_url"] = "https://i.gyazo.com/784ff41bd2b15e0046c8b621fab31990.png",
-                    ["text"] = "@Jxnt - discord.gg/Fyeju7nv3m"
+                    ["icon_url"] = "https://i.gyazo.com/ea76480f147f22311488a92dc8efc208.jpg",
+                    ["text"] = "CIHUY GEMING"
                 },
                 ["thumbnail"] = { 
                     ["url"] = "https://biggamesapi.io/image/"..Library.Functions.ParseAssetId(CurrentInfo.Icon)
@@ -921,8 +921,8 @@ local function SniperNotification(CurrentInfo, FindInfo, Percent)
                 ["description"] = table.concat(Description, "\n"),
                 ["timestamp"] = DateTime.now():ToIsoDate(),
                 ["footer"] = {
-                    ["icon_url"] = "https://i.gyazo.com/784ff41bd2b15e0046c8b621fab31990.png",
-                    ["text"] = "@Jxnt - discord.gg/Fyeju7nv3m"
+                    ["icon_url"] = "https://i.gyazo.com/ea76480f147f22311488a92dc8efc208.jpg",
+                    ["text"] = "CIHUY GEMING"
                 },
                 ["thumbnail"] = { 
                     ["url"] = "https://biggamesapi.io/image/"..Library.Functions.ParseAssetId(CurrentInfo.Icon)
@@ -957,8 +957,8 @@ local function SellerNotification(CurrentInfo)
                 ["description"] = table.concat(Description, "\n"),
                 ["timestamp"] = DateTime.now():ToIsoDate(),
                 ["footer"] = {
-                    ["icon_url"] = "https://i.gyazo.com/784ff41bd2b15e0046c8b621fab31990.png",
-                    ["text"] = "@Jxnt - discord.gg/Fyeju7nv3m"
+                    ["icon_url"] = "https://i.gyazo.com/ea76480f147f22311488a92dc8efc208.jpg",
+                    ["text"] = "CIHUY GEMING"
                 },
                 ["thumbnail"] = { 
                     ["url"] = "https://biggamesapi.io/image/"..Library.Functions.ParseAssetId(CurrentInfo.Icon)
