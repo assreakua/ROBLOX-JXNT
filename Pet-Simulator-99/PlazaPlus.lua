@@ -875,7 +875,7 @@ local function GlobalNotification(CurrentInfo, FindInfo, Percent)
         "**<:Money:1295946554338705438> "..("RAP:** `"..AddSuffix(CurrentInfo.RAP).." ("..Percent.."% off)`"),
         "**<:Profit:1295945416273301576> Profit:** `"..AddSuffix((CurrentInfo.Bought*CurrentInfo.RAP) - (CurrentInfo.Bought*CurrentInfo.Cost))..(CurrentInfo.Amount > 1 and " ("..AddSuffix(CurrentInfo.RAP-CurrentInfo.Cost).." per)`" or "`")
     }
-	local DiscordUserId = "405670514414321665"
+	local DiscordUserId = "405670514414321665",
     local Message = {
 		["username"] = "System Exodus | Plaza Plus",
 		["avatar_url"] = "https://i.gyazo.com/dbefd0df338c7ff9c08fc85ecea0df94.png",
