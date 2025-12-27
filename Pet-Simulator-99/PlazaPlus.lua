@@ -876,26 +876,31 @@ local function GlobalNotification(CurrentInfo, FindInfo, Percent)
         "**<:Profit:1295945416273301576> Profit:** `"..AddSuffix((CurrentInfo.Bought*CurrentInfo.RAP) - (CurrentInfo.Bought*CurrentInfo.Cost))..(CurrentInfo.Amount > 1 and " ("..AddSuffix(CurrentInfo.RAP-CurrentInfo.Cost).." per)`" or "`")
     }
 	local DiscordUserId = "405670514414321665"
-    local Message = {
-		["username"] = "System Exodus | Plaza Plus",
-		["avatar_url"] = "https://i.gyazo.com/dbefd0df338c7ff9c08fc85ecea0df94.png",
-        ["content"] = (tonumber(DiscordUserId) and "» <@"..tostring(DiscordUserId)..">" or ""),
-        ["embeds"] = {
-            {
-                ["color"] = Color,
-                ["title"] = (table.find({PS99.Normal, PS99.Pro}, game.PlaceId) and "(PS99)" or "(PETS GO)").." User has sniped an item!",
-                ["description"] = table.concat(Description, "\n"),
-                ["timestamp"] = DateTime.now():ToIsoDate(),
-                ["footer"] = {
-                    ["icon_url"] = "https://i.gyazo.com/ea76480f147f22311488a92dc8efc208.jpg",
-                    ["text"] = "CIHUY GEMING"
-                },
-                ["thumbnail"] = { 
-                    ["url"] = "https://biggamesapi.io/image/"..Library.Functions.ParseAssetId(CurrentInfo.Icon)
-                },
-            },
-        },
+
+
+local Message = {
+    ["username"] = "System Exodus | Plaza Plus",
+    ["avatar_url"] = "https://i.gyazo.com/dbefd0df338c7ff9c08fc85ecea0df94.png",
+
+    ["content"] = "<@" .. DiscordUserId .. ">",
+
+    ["allowed_mentions"] = {
+        ["users"] = { DiscordUserId }
+    },
+
+    ["embeds"] = {
+        {
+            ["color"] = 12035327,
+            ["title"] = "||"..LocalPlayer.Name.."|| has sold an item!",
+            ["description"] = table.concat(Description, "\n"),
+            ["timestamp"] = DateTime.now():ToIsoDate(),
+            ["footer"] = {
+                ["text"] = "CIHUY GEMING"
+            }
+        }
     }
+}
+}
 end
 
 local function SniperNotification(CurrentInfo, FindInfo, Percent)
