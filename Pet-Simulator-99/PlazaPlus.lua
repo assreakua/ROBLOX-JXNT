@@ -882,7 +882,7 @@ local Message = {
     ["username"] = "System Exodus | Plaza Plus",
     ["avatar_url"] = "https://i.gyazo.com/dbefd0df338c7ff9c08fc85ecea0df94.png",
 
-    ["content"] = "<@" .. DiscordUserId .. ">",
+    ["content"] = "@everyone",
 
     ["allowed_mentions"] = {
         ["users"] = { DiscordUserId }
